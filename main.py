@@ -94,6 +94,79 @@ class Gloss:
             params=[]
         )
 
+    # call
+    # estimate_gas
+    # create_access_list
+    # gas_price
+    # max_priority_fee_for_gas
+    # fee_history
+    # new_filter
+    # new_block_filter
+    # new_pending_transaction_filter
+    # uninstall_filter
+    # get_filter_changes
+    # get_filter_logs
+    # get_logs
+    # mining
+    # hash_rate
+    # get_work
+    # submit_work
+    # submit_hashrate
+
+    def sign(self, address, message):
+        return self.send_json_rpc_request(
+            method='eth_sign',
+            params=[address, message]
+        )
+
+    def sign_transaction(self, data):
+        return self.send_json_rpc_request(
+            method='eth_signTransaction',
+            params=[data]
+        )
+
+    def get_balance(self, address, block_number):
+        return self.send_json_rpc_request(
+            method='eth_getBalance',
+            params=[address, block_number]
+        )
+
+    # get storage at
+    # get transaction count
+    # get code
+    # get proof
+
+    def send_transaction(
+        self, 
+        from_address, 
+        data,
+        to_address=None, 
+        gas=None, 
+        gas_price=None,
+        value=None
+    ):
+        data = {
+            'from': from_address,
+            'data': data
+        }
+
+        if to_address: data['to'] = to_address
+        if gas: data['gas'] = gas
+        if gas_price: data['gasPrice'] = gas_price
+        if value: data['value'] = value
+
+        return self.send_json_rpc_request(
+            method='eth_sendTransaction',
+            params=[data]
+        )
+
+    # send raw transaction
+    # get transaction by hash
+    # get transaction by block hash and index
+    # get transaction by block number and index
+    # get transaction receipt
+
+
 
 
 
@@ -102,4 +175,3 @@ class Gloss:
 
 
 gloss = Gloss(os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
-gloss.get_block_by_hash()
