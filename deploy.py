@@ -45,12 +45,13 @@ if __name__ == '__main__':
     data=data
   )
 
-  # send transaction
-  # sign transaction
-  # send raw transaction
-  eth.send_transaction(
+  # send tx
+  # sign tx
+  signed_tx = eth.sign_transaction(
     from_address=from_address,
+    data=data,
     gas_price=gas_price,
-    gas=gas,
-    data=data
+    gas=gas
   )
+
+  # send raw tx

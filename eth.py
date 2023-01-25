@@ -143,31 +143,29 @@ class Eth:
             params=[address, message]
         )
 
-    def sign_transaction(
-        self,
-        fromAddress,
-        data,
-        toAddress=None,
-        gas=None,
-        gas_price=None,
-        value=None,
-        nonce=None
-    ):
+    def sign_transaction(self, from_address, data, to_address=None, gas=None, gas_price=None, value=None, nonce=None):
         tx_data = {
-            fromAddress,
-            data,
+            'from': from_address,
+            'data': data,
         }
 
-        if toAddress: tx_data['to'] = toAddress
+        if to_address: tx_data['to'] = to_address
         if gas: tx_data['gas'] = gas
         if gas_price: tx_data['gasPrice'] = gas_price
         if value: tx_data['value'] = value
         if nonce: tx_data['nonce'] = nonce
 
-        return self.send_json_rpc_request(
-            method='eth_signTransaction',
-            params=[tx_data]
-        )
+        data = {
+            'jsonrpc': '2.0',
+            'method': 'eth_signTransaction',
+            'params': [tx_data],
+            'id': 0
+        }
+
+        response = requests.post(self.http_provider, json=data)
+
+        print(json.loads(response.text))
+
 
     def get_balance(self, address, block_number):
         return self.send_json_rpc_request(
@@ -180,7 +178,7 @@ class Eth:
     # get code
     # get proof
 
-    def send_transaction(
+    def send_transactions(
         self, 
         from_address, 
         data,
@@ -209,6 +207,44 @@ class Eth:
         response = requests.post(self.http_provider, json=datatx)
 
         print(json.loads(response.text))
+        # sign transaction locally
+        # send raw encoded transaction
+
+    def send_transaction(
+        self,
+        private_key,
+        from_address,
+        data,
+        to_address=None,
+        gas=None,
+        gas_price=None,
+        value=None,
+        nonce=None
+    ):
+        # format transaction data
+        tx_data = {
+            'from': from_address,
+            'data': data
+        }
+
+        if to_address: tx_data['to'] = to_address
+        if gas: tx_data['gas'] = gas
+        if gas_price: tx_data['gasPrice'] = gas_price
+        if value: tx_data['value'] = value
+        if nonce: tx_data['nonce'] = nonce
+
+        # sign data and get tx hash, format raw tx
+        # Formatting Raw Transactions -> https://medium.com/mycrypto/the-magic-of-digital-signatures-on-ethereum-98fe184dc9c7
+        # Formatting Raw Transactions -> https://techblog.dac.digital/ethereum-signatures-and-transactions-using-a-hardware-wallet-10a88f344c
+        # Generating Signatures -> https://goethereumbook.org/signature-generate/
+        # Kecca256 Python -> https://stackoverflow.com/questions/46279121/how-can-i-find-keccak-256-hash-in-python
+        # Encode the transaction parameters: RLP(nonce, gasPrice, gasLimit, to, value, data, chainId, 0, 0).
+        # Get the Keccak256 hash of the RLP-encoded, unsigned transaction.
+        # Sign the hash with a private key using the ECDSA algorithm, according to the steps described above.
+        # Encode the signed transaction: RLP(nonce, gasPrice, gasLimit, to, value, data, v, r, s).
+        # send raw tx
+        # get transaction receipt
+    
 
     def send_raw_transaction(self, data):
         return self.send_json_rpc_request(
