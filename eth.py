@@ -1,4 +1,3 @@
-import os
 import json
 import requests
 from dotenv import load_dotenv
@@ -7,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class WalterJR:
+class Eth:
     def __init__(self, http_provider):
         self.http_provider = http_provider
 
@@ -90,9 +89,39 @@ class WalterJR:
         )
 
     # call
-    # estimate_gas
+
+    def estimate_gas(
+        self, 
+        block,
+        fromAddress=None,
+        toAddress=None,
+        gas=None,
+        gas_price=None,
+        value=None,
+        data=None
+    ):
+        tx = {}
+
+        if fromAddress: tx['from'] = fromAddress
+        if toAddress: tx['to'] = toAddress
+        if gas: tx['gas'] = gas
+        if gas_price: tx['gasPrice'] = gas_price
+        if value: tx['value'] = value
+        if data: tx['data'] = data
+
+        return self.send_json_rpc_request(
+            method='eth_estimateGas',
+            params=[tx, block]
+        )
+        
     # create_access_list
-    # gas_price
+    
+    def gas_price(self):
+        return self.send_json_rpc_request(
+            method='eth_gasPrice',
+            params=[]
+        )
+
     # max_priority_fee_for_gas
     # fee_history
     # new_filter
