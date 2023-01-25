@@ -1,6 +1,4 @@
-# TODO: remake compilation script
 import os
-import sys
 
 
 def compile():
@@ -10,5 +8,6 @@ def compile():
         command = f'solc -o {output_dir} --bin --ast-compact-json --asm contracts/{file_name}'
 
         os.system(command)
+
 
 compile()
