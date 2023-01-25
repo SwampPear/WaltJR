@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def hex_to_dec(value):
-    return int(value, 16)
-
-
 class WalterJR:
     def __init__(self, http_provider):
         self.http_provider = http_provider
@@ -164,5 +160,3 @@ class WalterJR:
     # get transaction by block hash and index
     # get transaction by block number and index
     # get transaction receipt
-
-gloss = WalterJR(os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
