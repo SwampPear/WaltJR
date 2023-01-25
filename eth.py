@@ -191,6 +191,12 @@ class Eth:
 
         print(json.loads(response.text))
 
+    def send_raw_transaction(self, data):
+        return self.send_json_rpc_request(
+            method='eth_sendRawTransaction',
+            params=[data]
+        )
+
     # send raw transaction
     # get transaction by hash
     # get transaction by block hash and index
