@@ -107,12 +107,20 @@ class Eth:
         if gas: tx['gas'] = gas
         if gas_price: tx['gasPrice'] = gas_price
         if value: tx['value'] = value
-        if data: tx['data'] = data
+        #if data: tx['data'] = data
 
-        return self.send_json_rpc_request(
-            method='eth_estimateGas',
-            params=[tx, block]
-        )
+        print(tx)
+
+        txd = {
+            'jsonrpc': '2.0',
+            'method': 'eth_estimateGas',
+            'params': [tx, block],
+            'id': 0
+        }
+
+        response = requests.post(self.http_provider, json=txd)
+
+        print(json.loads(response.text))
         
     # create_access_list
     
