@@ -25,10 +25,7 @@ if __name__ == '__main__':
   eth = Eth(http_provider=os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
 
   # from
-  fromAddress = os.getenv('ADDRESS')
-
-  # to  
-  toAddress = ''
+  from_address = os.getenv('ADDRESS')
     
   # gasPrice
   gas_price = eth.gas_price()
@@ -40,18 +37,20 @@ if __name__ == '__main__':
 
   data = '0x' + data
 
-  print(eth.chain_id())
-    
   # gas
-  gas_estimate = eth.estimate_gas(
+  gas = eth.estimate_gas(
     block='latest',
-    fromAddress=fromAddress,
-    toAddress=toAddress,
+    fromAddress=from_address,
     gas_price=gas_price,
     data=data
   )
 
-  # estimateGas
-
-
-
+  # send transaction
+  # sign transaction
+  # send raw transaction
+  eth.send_transaction(
+    from_address=from_address,
+    gas_price=gas_price,
+    gas=gas,
+    data=data
+  )

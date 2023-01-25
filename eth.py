@@ -109,18 +109,10 @@ class Eth:
         if value: tx['value'] = value
         #if data: tx['data'] = data
 
-        print(tx)
-
-        txd = {
-            'jsonrpc': '2.0',
-            'method': 'eth_estimateGas',
-            'params': [tx, block],
-            'id': 0
-        }
-
-        response = requests.post(self.http_provider, json=txd)
-
-        print(json.loads(response.text))
+        return self.send_json_rpc_request(
+            method='eth_estimateGas',
+            params=[tx, block]
+        )
         
     # create_access_list
     
@@ -168,6 +160,7 @@ class Eth:
     # get code
     # get proof
 
+    # TODO: fix 'does not exist/is not available'
     def send_transaction(
         self, 
         from_address, 
@@ -187,10 +180,16 @@ class Eth:
         if gas_price: data['gasPrice'] = gas_price
         if value: data['value'] = value
 
-        return self.send_json_rpc_request(
-            method='eth_sendTransaction',
-            params=[data]
-        )
+        datatx = {
+            'jsonrpc': '2.0',
+            'method': 'eth_sendTransaction',
+            'params': [data],
+            'id': 0
+        }
+
+        response = requests.post(self.http_provider, json=datatx)
+
+        print(json.loads(response.text))
 
     # send raw transaction
     # get transaction by hash
