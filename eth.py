@@ -210,6 +210,17 @@ class Eth:
         # sign transaction locally
         # send raw encoded transaction
 
+    def rlp_encode_json(self, data):
+        # encoding binary data with rklp https://medium.com/@markodayansa/a-comprehensive-guide-to-rlp-encoding-in-ethereum-6bd75c126de0
+        # format json data as list of two-tuples
+        arr = []
+
+        keys = list(data.keys())
+
+        for key in keys:
+            arr.push([key, data[key]])
+
+
     def send_transaction(
         self,
         private_key,
@@ -233,7 +244,12 @@ class Eth:
         if value: tx_data['value'] = value
         if nonce: tx_data['nonce'] = nonce
 
-        # sign data and get tx hash, format raw tx
+        # sign data and get tx hash, format raw t
+        # 1) serialize tx data with rlp
+        
+
+
+
         # Formatting Raw Transactions -> https://medium.com/mycrypto/the-magic-of-digital-signatures-on-ethereum-98fe184dc9c7
         # Formatting Raw Transactions -> https://techblog.dac.digital/ethereum-signatures-and-transactions-using-a-hardware-wallet-10a88f344c
         # Generating Signatures -> https://goethereumbook.org/signature-generate/
