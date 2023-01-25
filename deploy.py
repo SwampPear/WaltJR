@@ -22,10 +22,12 @@ load_dotenv()
 
 
 if __name__ == '__main__':
-    eth = Eth(http_provider=sys.argv[1])
+    eth = Eth(http_provider=os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
 
     fromAddress = os.getenv('ADDRESS')
     # gas = estiamte gas function
-    # gasPrice = gasPrice function
+    gas_price = eth.gas_price()
     # data = contract bytecode
+
+    print(gas_price)
 
