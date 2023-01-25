@@ -143,10 +143,30 @@ class Eth:
             params=[address, message]
         )
 
-    def sign_transaction(self, data):
+    def sign_transaction(
+        self,
+        fromAddress,
+        data,
+        toAddress=None,
+        gas=None,
+        gas_price=None,
+        value=None,
+        nonce=None
+    ):
+        tx_data = {
+            fromAddress,
+            data,
+        }
+
+        if toAddress: tx_data['to'] = toAddress
+        if gas: tx_data['gas'] = gas
+        if gas_price: tx_data['gasPrice'] = gas_price
+        if value: tx_data['value'] = value
+        if nonce: tx_data['nonce'] = nonce
+
         return self.send_json_rpc_request(
             method='eth_signTransaction',
-            params=[data]
+            params=[tx_data]
         )
 
     def get_balance(self, address, block_number):
@@ -160,7 +180,6 @@ class Eth:
     # get code
     # get proof
 
-    # TODO: fix 'does not exist/is not available'
     def send_transaction(
         self, 
         from_address, 
@@ -197,7 +216,6 @@ class Eth:
             params=[data]
         )
 
-    # send raw transaction
     # get transaction by hash
     # get transaction by block hash and index
     # get transaction by block number and index
