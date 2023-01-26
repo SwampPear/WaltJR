@@ -28,9 +28,16 @@ if __name__ == '__main__':
   gas_price = eth.gas_price()
 
   # data
-  data_file = open("artifacts/Test/SimpleStorage.bin", "r")
+  data_file = open("artifacts/Test/X.bin", "r")
   data = '0x' + data_file.read()
   data_file.close()
+
+  data_file2 = open("artifacts/Test/X.bin-runtime", "r")
+  data2 = '0x' + data_file2.read()
+  data_file2.close()
+
+  print(len(data))
+  print(len(data2))
 
   print(gas_price)
   print(data)

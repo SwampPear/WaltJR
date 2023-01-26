@@ -1,14 +1,11 @@
-// SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.4.16 <0.9.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
-contract SimpleStorage {
-    uint storedData;
+// Base contract X
+contract X {
+    string public name;
 
-    function set(uint x) public {
-        storedData = x;
-    }
-
-    function get() public view returns (uint) {
-        return storedData;
+    constructor(string memory _name) {
+        name = _name;
     }
 }
