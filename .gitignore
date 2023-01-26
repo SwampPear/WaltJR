@@ -1,4 +1,6 @@
-env/
-.env
+# Bot
+bot/env/
+
+# Contract
 contract/node_modules/
 contract/.env

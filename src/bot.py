@@ -1,8 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-from eth import Eth
-
 
 load_dotenv()
 
