@@ -22,36 +22,29 @@ load_dotenv()
 
 
 if __name__ == '__main__':
-  eth = Eth(http_provider=os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
+  eth = Eth(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-  # from
-  from_address = os.getenv('ADDRESS')
-    
   # gasPrice
   gas_price = eth.gas_price()
 
   # data
   data_file = open("artifacts/Test/Test.bin", "r")
-  data = data_file.read()
+  data = '0x' + data_file.read()
   data_file.close()
-
-  data = '0x' + data
 
   # gas
   gas = eth.estimate_gas(
-    block='latest',
-    fromAddress=from_address,
     gas_price=gas_price,
-    data=data
+    #data=data
   )
 
   # send tx
+  tx = {
+
+  }
   # sign tx
-  signed_tx = eth.sign_transaction(
-    from_address=from_address,
-    data=data,
+  signed_tx = eth.send_transaction(
     gas_price=gas_price,
     gas=gas
   )
 
-  # send raw tx
