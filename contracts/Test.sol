@@ -1,13 +1,14 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.4.16 <0.9.0;
 
-contract Test {
-   string public message;
-   constructor(string memory initMessage) {
-      message = initMessage;
-   }
+contract SimpleStorage {
+    uint storedData;
 
-   function update(string memory newMessage) public {
-      message = newMessage;
-   }
+    function set(uint x) public {
+        storedData = x;
+    }
+
+    function get() public view returns (uint) {
+        return storedData;
+    }
 }

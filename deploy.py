@@ -28,23 +28,22 @@ if __name__ == '__main__':
   gas_price = eth.gas_price()
 
   # data
-  data_file = open("artifacts/Test/Test.bin", "r")
+  data_file = open("artifacts/Test/SimpleStorage.bin", "r")
   data = '0x' + data_file.read()
   data_file.close()
 
-  # gas
+  print(gas_price)
+  print(data)
+
   gas = eth.estimate_gas(
     gas_price=gas_price,
-    #data=data
+    data=data
   )
 
-  # send tx
-  tx = {
-
-  }
   # sign tx
   signed_tx = eth.send_transaction(
     gas_price=gas_price,
-    gas=gas
+    gas='0xEE6B2',
+    data=data
   )
 

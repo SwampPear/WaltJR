@@ -23,7 +23,7 @@ def compile(contract_dir='contracts'):
     for file_name in os.listdir(contract_dir):
         output_dir = f"artifacts/{file_name.split('.')[0]}"
 
-        command = f'solc --overwrite -o {output_dir} --bin --abi contracts/{file_name}'
+        command = f'solc --overwrite -o {output_dir} --abi --bin contracts/{file_name}'
 
         os.system(command)
 

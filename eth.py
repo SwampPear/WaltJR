@@ -44,9 +44,7 @@ class Eth:
         value=None,
         data=None
     ):
-        tx = {
-          
-        }
+        tx = {}
 
         if toAddress: tx['to'] = toAddress
         if gas: tx['gas'] = gas
