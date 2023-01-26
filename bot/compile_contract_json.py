@@ -3,8 +3,7 @@ import json
 
 CONTRACTS = 'contracts.json'
 
-def write_json(pool, address, abi):
-    data = []
+def create_json(pool, address, abi):
     with open(CONTRACTS, 'r') as file:
         data = json.loads(file.read())
         
@@ -20,4 +19,39 @@ def write_json(pool, address, abi):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-write_json('a', 'b', 'c')
+def read_json(pool):
+    with open(CONTRACTS, 'r') as file:
+        data = json.loads(file.read())
+
+        for info in data:
+            if info['pool'] == pool:
+                return info['pool']
+
+
+def update_json(pool, address=None, abi=None):
+    with open(CONTRACTS, 'r') as file:
+        data = json.loads(file.read())
+
+        for info in data:
+            if info['pool'] == pool:
+                if address: info['address'] = address
+                if abi: info['abi'] = abi
+        
+    with open(CONTRACTS, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+
+
+def delete_json(pool):
+    with open(CONTRACTS, 'r') as file:
+        data = json.loads(file.read())
+
+        for info in data:
+            if info['pool'] == pool:
+                data.pop(info)
+        
+    with open(CONTRACTS, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+        
+
+
+create_json('a', 'b', 'c')
