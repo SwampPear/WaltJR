@@ -1,5 +1,6 @@
 # Bot
 bot/env/
+bot/.env
 
 # Contract
 contract/node_modules/

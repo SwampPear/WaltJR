@@ -1,0 +1,17 @@
+[
+    {
+        "pool": "a",
+        "address": "b",
+        "abi": "c"
+    },
+    {
+        "pool": "a",
+        "address": "b",
+        "abi": "c"
+    },
+    {
+        "pool": "a",
+        "address": "b",
+        "abi": "c"
+    }
+]
