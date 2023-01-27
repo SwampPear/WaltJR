@@ -13,6 +13,8 @@ class Bot:
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
+        self.dx_coefficient = 1000000000000000000
+
         self.contracts = []
         self.price_signatures = []
         self.swap_signatures = []
@@ -28,10 +30,10 @@ class Bot:
 
                 self.contracts.append(contract_impl)
 
-        # 1000000000000000000
+        1000000000000000000
 
-        a = self.contracts[0].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, 1000000000000000000).call()
-        print(a)
+        a = self.contracts[1].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, self.dx_coefficient).call()
+        print(a / 1000000000000000000)
 
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
