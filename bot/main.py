@@ -32,7 +32,7 @@ class Bot:
 
         1000000000000000000
 
-        a = self.contracts[1].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, self.dx_coefficient).call()
+        a = self.contracts[4].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, self.dx_coefficient).call()
         print(a / 1000000000000000000)
 
         

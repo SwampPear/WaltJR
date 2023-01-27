@@ -840,9 +840,7 @@
                 "gas": 2501
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
-        "dx": 1000000000000000000,
-        "type": "curve"
+        "priceSignature": "get_dy(int128,int128,uint256)"
     },
     {
         "pool": "lusd",
@@ -2203,8 +2201,7 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
-        "type": "curve"
+        "priceSignature": "get_dy(int128,int128,uint256)"
     },
     {
         "pool": "susd",
@@ -2969,8 +2966,7 @@
                 "gas": 2291
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
-        "type": "curve"
+        "priceSignature": "get_dy(int128,int128,uint256)"
     },
     {
         "pool": "frax",
@@ -4331,8 +4327,7 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
-        "type": "curve"
+        "priceSignature": "get_dy(int128,int128,uint256)"
     },
     {
         "pool": "mim",
@@ -5693,7 +5688,6 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
-        "type": "curve"
+        "priceSignature": "get_dy(int128,int128,uint256)"
     }
 ]
