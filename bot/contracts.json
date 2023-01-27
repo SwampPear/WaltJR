@@ -1,7 +1,7 @@
 [
     {
         "pool": "3pool",
-        "address": "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        "address": "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7",
         "abi": [
             {
                 "name": "TokenExchange",

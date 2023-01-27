@@ -17,7 +17,7 @@ class Eth:
         self.public_key = public_key
         self.private_key = private_key
         
-        self.http_provider = Web3.HTTPProvider(os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'))
+        self.http_provider = Web3.HTTPProvider(os.getenv('INFURA_URL_ENDPOINT_MAINNET'))
         self.w3 = Web3(self.http_provider)
 
     def get_transaction_count(self):
@@ -31,7 +31,7 @@ class Eth:
             'id': 0
         }
 
-        response = requests.post(os.getenv('INFURA_URL_ENDPOINT_SEPOLIA'), json=data)
+        response = requests.post(os.getenv('INFURA_URL_ENDPOINT_MAINNET'), json=data)
 
         return json.loads(response.text)['result']
 
