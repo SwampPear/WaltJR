@@ -16,6 +16,7 @@ class Bot:
         self.dx_coefficient = 1000000000000000000
 
         self.contracts = []
+
         self.price_signatures = []
         self.swap_signatures = []
 
@@ -28,12 +29,21 @@ class Bot:
                     abi=contract['abi']
                 )
 
-                self.contracts.append(contract_impl)
+                data = {
+                    'contract': contract_impl,
+                    'priceSignature': contract['priceSignature'],
+                    # swap signatures
+                    'type': contract['type'] 
+                }
 
-        1000000000000000000
+                self.contracts.append(data)
 
-        a = self.contracts[4].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, self.dx_coefficient).call()
-        print(a / 1000000000000000000)
+    def get_price_option(self, contract):
+        if contract['type'] == 'curve':
+            raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1, self.dx_coefficient).call()
 
+            return raw_price / self.dx_coefficient
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
+
+print(bot.get_price_option(bot.contracts[3]))
