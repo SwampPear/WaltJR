@@ -64,3 +64,13 @@ def price(pool, sig):
     with open(CONTRACTS, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+
+with open(CONTRACTS, 'r') as file:
+        data = json.loads(file.read())
+
+        for info in data:
+            info['type'] = 'curve'
+        
+with open(CONTRACTS, 'w', encoding='utf-8') as file:
+    json.dump(data, file, ensure_ascii=False, indent=4)        
+
