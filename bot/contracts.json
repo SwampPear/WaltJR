@@ -839,7 +839,8 @@
                 "type": "function",
                 "gas": 2501
             }
-        ]
+        ],
+        "priceSignature": "get_dy(int128,int128,uint256)"
     },
     {
         "pool": "lusd",

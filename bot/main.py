@@ -14,6 +14,8 @@ class Bot:
         self.w3 = self.eth.w3
 
         self.contracts = []
+        self.price_signatures = []
+        self.swap_signatures = []
 
         with open('contracts.json', 'r') as file:
             contract_data = json.loads(file.read())
@@ -26,7 +28,9 @@ class Bot:
 
                 self.contracts.append(contract_impl)
 
-        a = self.contracts[0].get_function_by_signature('A()')().call()
+        # 1000000000000000000
+
+        a = self.contracts[0].get_function_by_signature('get_dy(int128,int128,uint256)')(0, 1, 1000000000000000000).call()
         print(a)
 
         
