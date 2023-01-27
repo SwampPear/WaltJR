@@ -40,10 +40,16 @@ class Bot:
 
     def get_price_option(self, contract):
         if contract['type'] == 'curve':
-            raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1, self.dx_coefficient).call()
+            raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1).call()
 
             return raw_price / self.dx_coefficient
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-print(bot.get_price_option(bot.contracts[3]))
+print(bot.get_price_option(bot.contracts[0]))
+
+# 0 - 
+# 1 -
+# 2 -
+# 3 -
+# 4 -
