@@ -66,7 +66,6 @@ def price(pool, sig):
 
 
 def coins_sig(pool, coin_signautre):
-
     with open(CONTRACTS, 'r') as file:
         data = json.loads(file.read())
 

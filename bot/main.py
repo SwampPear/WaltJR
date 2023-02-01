@@ -37,6 +37,12 @@ class Bot:
 
                 self.contracts.append(data)
 
+    def get_coins(self, contract, coin):
+        if contract['type'] == 'curve':
+            coin_address = contract['contract'].get_function_by_signature(contract['coinsSignature'])(coin).call()
+
+            return coin_address
+
     def get_price_option(self, contract):
         if contract['type'] == 'curve':
             raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1, self.dx_coefficient).call()
