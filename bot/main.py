@@ -45,7 +45,7 @@ class Bot:
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-print(bot.get_price_option(bot.contracts[4]))
+print(bot.get_price_option(bot.contracts[0]))
 
 # 1) continuously iterate through each of the contracts and check prices
 # 2) if any rates are above 1, log and continue
