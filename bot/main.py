@@ -32,6 +32,7 @@ class Bot:
                 data = {
                     'contract': contract_impl,
                     'priceSignature': contract['priceSignature'],
+                    'coinsSignature': contract['coinsSignature'],
                     'type': contract['type'] 
                 }
 
@@ -51,7 +52,11 @@ class Bot:
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-print(bot.get_price_option(bot.contracts[0]))
+for i in range(0, 100):
+    try:
+        print(f'{i}: {bot.get_coins(bot.contracts[0], i)}')
+    except:
+        pass
 
 # 1) continuously iterate through each of the contracts and check prices
 # 2) if any rates are above 1, log and continue
