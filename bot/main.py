@@ -52,7 +52,7 @@ class Bot:
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-for i in range(0, 100):
+for i in range(0, 10):
     try:
         print(f'{i}: {bot.get_coins(bot.contracts[0], i)}')
     except:
@@ -63,3 +63,6 @@ for i in range(0, 100):
 # 3) simultaneoulsy iterate through logged rates and check if any inverse rates are present
 # 4) as soon as an inverse pair is found, execute smart contract function
 # 5) through each iteration of the smart contract function, check the price on
+
+
+# will ha
