@@ -63,6 +63,3 @@ for i in range(0, 10):
 # 3) simultaneoulsy iterate through logged rates and check if any inverse rates are present
 # 4) as soon as an inverse pair is found, execute smart contract function
 # 5) through each iteration of the smart contract function, check the price on
-
-
-# will ha
