@@ -10,53 +10,53 @@ load_dotenv()
 
 class Bot:
     def __init__(self, public_key, private_key):
+        # ethereum interface
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
-        self.dx_coefficient = 10 ** 18
-
-        self.contracts = []
-
-        self.price_signatures = []
-        self.swap_signatures = []
+        self.contract_data = []
 
         with open('contracts.json', 'r') as file:
-            contract_data = json.loads(file.read())
+            self.contract_data = json.loads(file.read())
 
-            for contract in contract_data:
+            for contract in self.contract_data:
+                address = contract['address']
+                abi = contract['abi']
+
                 contract_impl = self.w3.eth.contract(
                     address=contract['address'], 
                     abi=contract['abi']
                 )
 
-                data = {
-                    'contract': contract_impl,
-                    'priceSignature': contract['priceSignature'],
-                    'coinsSignature': contract['coinsSignature'],
-                    'type': contract['type'] 
-                }
+                contract['contract_impl'] = contract_impl
 
-                self.contracts.append(data)
-
-    def get_coins(self, contract, coin):
+                
+    def get_rate(self, contract, a=None, b=None):
         if contract['type'] == 'curve':
-            coin_address = contract['contract'].get_function_by_signature(contract['coinsSignature'])(coin).call()
+            a_number = 0
+            b_number = 0
 
-            return coin_address
+            for coin in contract['coins']:
+                if coin['name'] == a:
+                    a_number = coin['number']
 
-    def get_price_option(self, contract):
-        if contract['type'] == 'curve':
-            raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1, self.dx_coefficient).call()
+                if coin['name'] == b:
+                    b_number = coin['number']
 
-            return raw_price / self.dx_coefficient
+            raw_price = contract['contract_impl'].get_function_by_signature(
+                contract['priceSignature']
+            )(a_number, b_number, (10 ** 18)).call()
+
+            return raw_price / 1000000
 
     def test(self):
-        if contract['type'] == 'curve':
-            
+        for contract in self.contract_data:
+            print(self.get_rate(contract, a='dai', b='usdc'))
+
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-print(bot.test())
+bot.test()
 
 # 1) continuously iterate through each of the contracts and check prices
 # 2) if any rates are above 1, log and continue
@@ -67,21 +67,3 @@ print(bot.test())
 ##############################################################################################
 ####################################### Testing Ground #######################################
 ##############################################################################################
-
-{
-  "method": "eth_call",
-  "params": [
-    {
-      "gas": "0xb71b00",
-      "to": "0x0000000022d53366457f9d5e68ec105046fc4383",
-      "data": "0x493f4f740000000000000000000000000000000000000000000000000000000000000002"
-    },
-    "latest"
-  ],
-  "id": 49,
-  "jsonrpc": "2.0"
-}
-
-{"jsonrpc":"2.0","id":49,"result":"0x00000000000000000000000099a58482bd75cbab83b27ec03ca68ff489b5788f"}
-
-# should test out using get_dy_underlying

@@ -75,3 +75,14 @@ def coins_sig(pool, coin_signautre):
             
     with open(CONTRACTS, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+data = []
+
+with open(CONTRACTS, 'r') as file:
+    data = json.loads(file.read())
+
+    for info in data:
+        contract_data = {}
+            
+with open(CONTRACTS, 'w', encoding='utf-8') as file:
+    json.dump(data, file, ensure_ascii=False, indent=4)

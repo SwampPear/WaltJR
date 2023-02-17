@@ -2,6 +2,20 @@
     {
         "pool": "lusd",
         "address": "0xEd279fDD11cA84bEef15AF5D39BB4d4bEE23F0cA",
+        "coins": [
+            {
+                "name":"dai",
+                "number":1
+            },
+            {
+                "name":"usdc",
+                "number":2
+            },
+            {
+                "name":"usdt",
+                "number":3
+            }
+        ],
         "abi": [
             {
                 "name": "Transfer",
@@ -1358,12 +1372,26 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
+        "priceSignature": "get_dy_underlying(int128,int128,uint256)",
         "type": "curve",
         "coinsSignature": "coins(uint256)"
     },
     {
         "pool": "frax",
+        "coins": [
+            {
+                "name":"dai",
+                "number":1
+            },
+            {
+                "name":"usdc",
+                "number":2
+            },
+            {
+                "name":"usdt",
+                "number":3
+            }
+        ],
         "address": "0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B",
         "abi": [
             {
@@ -2721,12 +2749,26 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
+        "priceSignature": "get_dy_underlying(int128,int128,uint256)",
         "type": "curve",
         "coinsSignature": "coins(uint256)"
     },
     {
         "pool": "mim",
+        "coins": [
+            {
+                "name":"dai",
+                "number":1
+            },
+            {
+                "name":"usdc",
+                "number":2
+            },
+            {
+                "name":"usdt",
+                "number":3
+            }
+        ],
         "address": "0x5a6A4D54456819380173272A5E8E9B9904BdF41B",
         "abi": [
             {
@@ -4084,12 +4126,26 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
+        "priceSignature": "get_dy_underlying(int128,int128,uint256)",
         "type": "curve",
         "coinsSignature": "coins(uint256)"
     },
     {
         "pool": "alusd",
+        "coins": [
+            {
+                "name":"dai",
+                "number":1
+            },
+            {
+                "name":"usdc",
+                "number":2
+            },
+            {
+                "name":"usdt",
+                "number":3
+            }
+        ],
         "address": "0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c",
         "abi": [
             {
@@ -5447,12 +5503,26 @@
                 "gas": 2531
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
+        "priceSignature": "get_dy_underlying(int128,int128,uint256)",
         "type": "curve",
         "coinsSignature": "coins(uint256)"
     },
     {
         "pool": "rai",
+        "coins": [
+            {
+                "name":"dai",
+                "number":1
+            },
+            {
+                "name":"usdc",
+                "number":2
+            },
+            {
+                "name":"usdt",
+                "number":3
+            }
+        ],
         "address": "0x618788357D0EBd8A37e763ADab3bc575D54c2C7d",
         "abi": [
             {
@@ -6493,7 +6563,7 @@
                 "gas": 3738
             }
         ],
-        "priceSignature": "get_dy(int128,int128,uint256)",
+        "priceSignature": "get_dy_underlying(int128,int128,uint256)",
         "type": "curve",
         "coinsSignature": "coins(uint256)"
     }
