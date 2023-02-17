@@ -14,6 +14,7 @@ class Bot:
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
+        # contract interaction
         self.contract_data = []
 
         with open('contracts.json', 'r') as file:
@@ -30,7 +31,42 @@ class Bot:
 
                 contract['contract_impl'] = contract_impl
 
-                
+        # available currencies to trade
+        self.available_currencies = ['dai', 'usdc', 'usdt']
+
+
+        # minimum rate to chance on
+        self.min_rate = 1.00001
+        
+        # bot tasks
+        # mapping of arbitrage chances
+        self.arbitrage_chances = []
+
+    def check_for_arbitrage(self):
+        # iterate through available contracts to trade with
+        for contract in self.contract_data:
+
+            # iterate through each available currency
+            for currency_a in self.available_currencies:
+
+                # check rate against other available currencies
+                for currency_b in self.available_currencies:
+
+                    # pass if currency is same
+                    if currency_a != currency_b:
+                        rate = self.get_rate(contract, currency_a, currency_b)
+
+                        # append arbitrage chance
+                        if rate > self.min_rate:
+                            arbitrage = {
+                                a: currency_a,
+                                b: currency_b,
+                                contract: contract
+                            }
+                            
+                            self.arbitrage_chances.append(arbitrage)
+        
+    
     def get_rate(self, contract, a=None, b=None):
         if contract['type'] == 'curve':
             a_number = 0
