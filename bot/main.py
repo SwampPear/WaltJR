@@ -9,41 +9,45 @@ load_dotenv()
 
 
 class Bot:
-    def __init__(self, public_key, private_key):
-        # ethereum interface
+    def __init__(self, public_key, private_key, contract_db='contracts.json'):
+        """
+        Initializes the 'Bot' class.
+
+        Arguments
+        ---------
+        public_key  (str) : the public key of the wallet to interact with
+        private_key (str) : the private key of the wallet to interact with
+        """
+        
+        # eth interaction
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
         # contract interaction
-        self.contract_data = []
+        self.contracts = []
 
-        with open('contracts.json', 'r') as file:
-            self.contract_data = json.loads(file.read())
+        # initialize contract data from json
+        with open(contract_db, 'r') as file:
+            self.contracts = json.loads(file.read())
 
-            for contract in self.contract_data:
-                address = contract['address']
-                abi = contract['abi']
-
-                contract_impl = self.w3.eth.contract(
-                    address=contract['address'], 
-                    abi=contract['abi']
+            for _contract in self.contracts:
+                _contract_impl = self.w3.eth.contract(
+                    address=_contract['address'], 
+                    abi=_contract['abi']
                 )
 
-                contract['contract_impl'] = contract_impl
+                _contract['contract_impl'] = _contract_impl
 
-        # available currencies to trade
-        self.available_currencies = ['dai', 'usdc', 'usdt']
-
-
-        # minimum rate to chance on
+        self.coins = ['dai', 'usdc', 'usdt']
         self.min_rate = 1.00001
         
         # bot tasks
-        # mapping of arbitrage chances
         self.arbitrage_chances = []
 
+        
     def swap(self):
         pass
+
     
     def run(self):
         for contract in self.contract_data:
@@ -57,12 +61,13 @@ class Bot:
             if _arbitrage_chances:
                 # execute swap        
 
+                
     def check_contract_for_arbitrage(self, contract):
         # iterate through each available currency
-        for currency_a in self.available_currencies:
+        for currency_a in self.coins:
 
             # check rate against other available currencies
-            for currency_b in self.available_currencies:
+            for currency_b in self.coins:
 
                 # pass if currency is same
                 if currency_a != currency_b:
@@ -77,6 +82,7 @@ class Bot:
                         }
                             
                         self.arbitrage_chances.append(arbitrage)
+
                         
     def check_for_arbitrage(self):
         # iterate through arbitrage chances and check if two inverse exchange rates are present
@@ -92,26 +98,41 @@ class Bot:
 
         # else return None
         return None        
-                        
-    def get_rate(self, contract, a=None, b=None):
+
+    
+    def get_rate(self, contract, i=None, j=None):
+        """
+        Returns the exchange rate between two currencies on an exchange designated by a given contract.
+
+        Arguments
+        ---------
+        contract (json) : the contract object to interact with
+        i         (str) : the name of the first currency to trade
+        j         (str) : the name of the second currency to trade
+        """
+        
         if contract['type'] == 'curve':
-            a_number = 0
-            b_number = 0
+            # map currency name to curve-readable int
+            a = 0
+            b = 0
 
             for coin in contract['coins']:
-                if coin['name'] == a:
-                    a_number = coin['number']
+                if coin['name'] == i:
+                    a = coin['number']
 
-                if coin['name'] == b:
-                    b_number = coin['number']
+                if coin['name'] == j:
+                    b = coin['number']
 
             raw_price = contract['contract_impl'].get_function_by_signature(
                 contract['priceSignature']
-            )(a_number, b_number, (10 ** 18)).call()
+            )(a, b, (10 ** 18)).call()
 
             return raw_price / 1000000
 
     def test(self):
+        """
+        This method is only to be used during the implementation process of this bot.
+        """
         for contract in self.contract_data:
             print(self.get_rate(contract, a='dai', b='usdc'))
 
@@ -119,13 +140,3 @@ class Bot:
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
 bot.test()
-
-# 1) continuously iterate through each of the contracts and check prices
-# 2) if any rates are above 1, log and continue
-# 3) simultaneoulsy iterate through logged rates and check if any inverse rates are present
-# 4) as soon as an inverse pair is found, execute smart contract function
-# 5) through each iteration of the smart contract function, check the price on
-
-##############################################################################################
-####################################### Testing Ground #######################################
-##############################################################################################
