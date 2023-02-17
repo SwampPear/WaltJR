@@ -49,17 +49,39 @@ class Bot:
             raw_price = contract['contract'].get_function_by_signature(contract['priceSignature'])(0, 1, self.dx_coefficient).call()
 
             return raw_price / self.dx_coefficient
+
+    def test(self):
+        if contract['type'] == 'curve':
+            
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
-for i in range(0, 10):
-    try:
-        print(f'{i}: {bot.get_coins(bot.contracts[0], i)}')
-    except:
-        pass
+print(bot.test())
 
 # 1) continuously iterate through each of the contracts and check prices
 # 2) if any rates are above 1, log and continue
 # 3) simultaneoulsy iterate through logged rates and check if any inverse rates are present
 # 4) as soon as an inverse pair is found, execute smart contract function
 # 5) through each iteration of the smart contract function, check the price on
+
+##############################################################################################
+####################################### Testing Ground #######################################
+##############################################################################################
+
+{
+  "method": "eth_call",
+  "params": [
+    {
+      "gas": "0xb71b00",
+      "to": "0x0000000022d53366457f9d5e68ec105046fc4383",
+      "data": "0x493f4f740000000000000000000000000000000000000000000000000000000000000002"
+    },
+    "latest"
+  ],
+  "id": 49,
+  "jsonrpc": "2.0"
+}
+
+{"jsonrpc":"2.0","id":49,"result":"0x00000000000000000000000099a58482bd75cbab83b27ec03ca68ff489b5788f"}
+
+# should test out using get_dy_underlying
