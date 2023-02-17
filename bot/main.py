@@ -42,31 +42,57 @@ class Bot:
         # mapping of arbitrage chances
         self.arbitrage_chances = []
 
-    def check_for_arbitrage(self):
-        # iterate through available contracts to trade with
-        for contract in self.contract_data:
-
-            # iterate through each available currency
-            for currency_a in self.available_currencies:
-
-                # check rate against other available currencies
-                for currency_b in self.available_currencies:
-
-                    # pass if currency is same
-                    if currency_a != currency_b:
-                        rate = self.get_rate(contract, currency_a, currency_b)
-
-                        # append arbitrage chance
-                        if rate > self.min_rate:
-                            arbitrage = {
-                                a: currency_a,
-                                b: currency_b,
-                                contract: contract
-                            }
-                            
-                            self.arbitrage_chances.append(arbitrage)
-        
+    def swap(self):
+        pass
     
+    def run(self):
+        for contract in self.contract_data:
+            # iterate through all contracts and check for arbitrage chances
+            self.check_contract_for_arbitrage(contract)
+
+            # check against local arbitrage chances
+            _arbitrage_chances = self.check_for_arbitrage()
+
+            # if chances are present, then execute swap
+            if _arbitrage_chances:
+                # execute swap        
+
+    def check_contract_for_arbitrage(self, contract):
+        # iterate through each available currency
+        for currency_a in self.available_currencies:
+
+            # check rate against other available currencies
+            for currency_b in self.available_currencies:
+
+                # pass if currency is same
+                if currency_a != currency_b:
+                    rate = self.get_rate(contract, currency_a, currency_b)
+
+                    # append arbitrage chance
+                    if rate > self.min_rate:
+                        arbitrage = {
+                            a: currency_a,
+                            b: currency_b,
+                            contract: contract
+                        }
+                            
+                        self.arbitrage_chances.append(arbitrage)
+                        
+    def check_for_arbitrage(self):
+        # iterate through arbitrage chances and check if two inverse exchange rates are present
+        for chance_a in self.arbitrage_chances:
+            for chance_b in self.arbitrage_chances:
+
+                # make sure arbitrage chance is not the same
+                if chance_a != chance_b:
+                    if chance_a['a'] == chance_b['b'] and chance_a['b'] == chance_b['a']:
+                        
+                        # emit arbitrage chance pair
+                        return [chance_a, chance_b]
+
+        # else return None
+        return None        
+                        
     def get_rate(self, contract, a=None, b=None):
         if contract['type'] == 'curve':
             a_number = 0
