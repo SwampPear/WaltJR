@@ -50,7 +50,7 @@ class Bot:
 
     
     def run(self):
-        for contract in self.contract_data:
+        for contract in self.contracts:
             # iterate through all contracts and check for arbitrage chances
             self.check_contract_for_arbitrage(contract)
 
@@ -59,7 +59,20 @@ class Bot:
 
             # if chances are present, then execute swap
             if _arbitrage_chances:
-                # execute swap        
+                # execute swap
+                pass
+
+    def test(self):
+        """
+        Only used to test during implementation process
+        """
+
+        _contracts = self.contracts[0:2]
+
+        
+        for _contract in _contracts:
+            self.check_contract_for_arbitrage(_contract)
+            _arbitrage_chances = self.check_for_arbitrage()
 
                 
     def check_contract_for_arbitrage(self, contract):
@@ -72,13 +85,15 @@ class Bot:
                 # pass if currency is same
                 if currency_a != currency_b:
                     rate = self.get_rate(contract, currency_a, currency_b)
-
+                    print(f'\033[92m{currency_a}\033[0m')
+                    print(f'\033[92m{currency_b}\033[0m')
+                    print(f'\033[91m{rate}\033[0m')
                     # append arbitrage chance
                     if rate > self.min_rate:
                         arbitrage = {
-                            a: currency_a,
-                            b: currency_b,
-                            contract: contract
+                            'a': currency_a,
+                            'b': currency_b,
+                            'contract': contract
                         }
                             
                         self.arbitrage_chances.append(arbitrage)
@@ -123,19 +138,22 @@ class Bot:
                 if coin['name'] == j:
                     b = coin['number']
 
+            # map currency to decimals
+            i_decimals = 0
+            j_decimals = 0
+
+            if i == 'dai': i_decimals = 10 ** 18
+            if j == 'dai': j_decimals = 10 ** 18
+            if i == 'usdc': i_decimals = 10 ** 6
+            if j == 'usdc': j_decimals = 10 ** 6
+            if i == 'usdt': i_decimals = 10 ** 6
+            if j == 'usdt': j_decimals = 10 ** 6
+
             raw_price = contract['contract_impl'].get_function_by_signature(
                 contract['priceSignature']
-            )(a, b, (10 ** 18)).call()
+            )(a, b, i_decimals).call()
 
-            return raw_price / 1000000
-
-    def test(self):
-        """
-        This method is only to be used during the implementation process of this bot.
-        """
-        for contract in self.contract_data:
-            print(self.get_rate(contract, a='dai', b='usdc'))
-
+            return raw_price / j_decimals
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
