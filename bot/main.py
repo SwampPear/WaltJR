@@ -47,18 +47,12 @@ class Bot:
                 _contract['contract_impl'] = _contract_impl
 
         self.coins = ['dai', 'usdc', 'usdt']
-        self.min_rate = 1.00001
+        self.min_rate = 1
 
     
     def _get_exchange_rate(self, contract, i, j):
         """
         Returns the exchange rate between two currencies on an exchange designated by a given contract.
-
-        Arguments
-        ---------
-        contract (json) : the contract object to interact with
-        i         (str) : the name of the first currency to trade
-        j         (str) : the name of the second currency to trade
         """
         
         if contract['type'] == 'curve':
@@ -91,7 +85,7 @@ class Bot:
             return raw_price / j_decimals
         
 
-    def _swap(self, i_address, j_address, i, j, amount):
+    def _swap(self, i_address, j_address, i, j):
         """
         Executes the swap operation within the smart contract.
         """
@@ -119,17 +113,20 @@ class Bot:
                         _arbitrage_chance = {
                             'i': _coin_i,
                             'j': _coin_j,
-                            'status': False
+                            'status': False,
+                            'rate': 0
                         }
 
                         _contract_data['arbitrageChances'].append(
                             _arbitrage_chance
                         )
 
+            _arbitrage_chances.append(_contract_data)
+
         return _arbitrage_chances
 
 
-    def _update_arbitrage_chance(self, arbitrage_chances, address, i, j, status):
+    def _update_arbitrage_chance(self, arbitrage_chances, address, i, j, status, rate):
         """
         Updates an individual arbitrage chance.
         """
@@ -140,6 +137,7 @@ class Bot:
                 for _currency_pair in _arbitrage_chance['arbitrageChances']:
                     if _currency_pair['i'] == i and _currency_pair['j'] == j:
                         _currency_pair['status'] = status
+                        _currency_pair['rate'] = rate
 
     
     def _update_arbitrage_chances(self, _arbitrage_chances):
@@ -151,7 +149,7 @@ class Bot:
                 for _coin_j in self.coins:
                     if _coin_i != _coin_j:
                         # get exchange rate and check above min
-                        _rate = self.get_exchange_rate(
+                        _rate = self._get_exchange_rate(
                             _contract, 
                             _coin_i, 
                             _coin_j
@@ -163,7 +161,8 @@ class Bot:
                                 _contract['address'],
                                 _coin_i,
                                 _coin_j,
-                                True
+                                True,
+                                _rate
                             )
                         else:
                             self._update_arbitrage_chance(
@@ -171,7 +170,8 @@ class Bot:
                                 _contract['address'],
                                 _coin_i,
                                 _coin_j,
-                                False
+                                False,
+                                _rate
                             )
 
 
@@ -180,30 +180,52 @@ class Bot:
         Checks for an inverse arbitrage chance based on a given address, i, and j and makes
         the swap.
         """
+        _arbitrage_chance_found = False
+        _address = ''
+        _rate = 0
+
         for _arbitrage_data in arbitrage_chances:
             for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
-                if _arbitrage_chance['status'] and _arbitrage_chance['i'] == j and _arbitrage_chance['j'] == i:
-                    self._swap(
-                        address,
-                        _arbitrage_data['address'],
-                        i,
-                        j
-                    )
+                if _arbitrage_chance['status'] and _arbitrage_chance['i'] == j and _arbitrage_chance['j'] == i and _arbitrage_chance['rate'] > _rate:
+                    _arbitrage_chance_found = True
+                    _address = _arbitrage_data['address']
+                    _rate = _arbitrage_chance['rate']
+
+        if _arbitrage_chance_found:
+            self._swap(
+                address,
+                _address,
+                i,
+                j
+            )
 
 
     def _execute_arbitrage(self, arbitrage_chances):
         """
         Executes arbitrage based on arbitrage chances.
         """
+        _arbitrage_chance_found = False
+        _address = ''
+        _i = ''
+        _j = ''
+        _rate = 0
+
         for _arbitrage_data in arbitrage_chances:
             for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
-                if _arbitrage_chance['status']:
-                    self._check_for_inverse_arbitrage(
-                        arbitrage_chances,
-                        _arbitrage_data['address'],
-                        _arbitrage_chance['i'],
-                        _arbitrage_chance['j']
-                    )
+                if _arbitrage_chance['status'] and _arbitrage_chance['rate'] > _rate:
+                    _arbitrage_chance_found = True
+                    _address = _arbitrage_data['address']
+                    _i = _arbitrage_chance['i']
+                    _j = _arbitrage_chance['j']
+                    _rate = _arbitrage_chance['rate']
+
+        if _arbitrage_chance_found:
+            self._check_for_inverse_arbitrage(
+                arbitrage_chances,
+                _address,
+                _i,
+                _j
+            )
         
 
     def run(self):
@@ -215,6 +237,10 @@ class Bot:
 
         while not _should_terminate:
             self._update_arbitrage_chances(_arbitrage_chances)
+            self._execute_arbitrage(_arbitrage_chances)
+
+            _should_terminate = True
+
             
             
 
@@ -223,3 +249,5 @@ class Bot:
     
         
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
+
+bot.run()
