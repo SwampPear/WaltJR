@@ -48,101 +48,9 @@ class Bot:
 
         self.coins = ['dai', 'usdc', 'usdt']
         self.min_rate = 1.00001
-        
-        # bot tasks
-        self.arbitrage_chances = []
-
-        
-    def swap(self):
-        """
-        Executes the swap operation within the smart contract.
-        """
-        pass
 
     
-    def run(self):
-        """
-        Runs the main loop for this bot.
-        """
-        
-        should_stop = False
-
-        while not should_stop:
-            for contract in self.contracts:
-                # iterate through all contracts and check for arbitrage chances
-                self.check_contract_for_arbitrage(contract)
-
-                # check against local arbitrage chances
-                _arbitrage_chances = self.check_for_arbitrage()
-
-                # if chances are present, then execute swap
-                if _arbitrage_chances:
-                    # execute swap
-                    pass
-
-            time.sleep(30)
-
-    def test(self):
-        """
-        This function should only exist as a proxy during the implementation process.
-        """
-        for contract in self.contracts:
-            # iterate through all contracts and check for arbitrage chances
-            self.check_contract_for_arbitrage(contract)
-
-            # check against local arbitrage chances
-            _arbitrage_chances = self.check_for_arbitrage()
-
-            # if chances are present, then execute swap
-            if _arbitrage_chances:
-                # execute swap
-                pass
-
-                
-    def check_contract_for_arbitrage(self, contract):
-        # iterate through each available currency
-        for currency_a in self.coins:
-
-            # check rate against other available currencies
-            for currency_b in self.coins:
-
-                # pass if currency is same
-                if currency_a != currency_b:
-                    rate = self.get_rate(contract, currency_a, currency_b)
-                    print(f'\033[96m{currency_a} \u279C {currency_b}\033[0m')
-
-                    if rate > self.min_rate:
-                        print(f'\033[92m{rate}\033[0m')
-                    else:
-                        print(f'\033[91m{rate}\033[0m')
-                    # append arbitrage chance
-                    if rate > self.min_rate:
-                        arbitrage = {
-                            'a': currency_a,
-                            'b': currency_b,
-                            'contract': contract
-                        }
-                            
-                        self.arbitrage_chances.append(arbitrage)
-
-                        
-    def check_for_arbitrage(self):
-        # iterate through arbitrage chances and check if two inverse exchange rates are present
-        for chance_a in self.arbitrage_chances:
-            for chance_b in self.arbitrage_chances:
-
-                # make sure arbitrage chance is not the same
-                if chance_a != chance_b:
-                    if chance_a['a'] == chance_b['b'] and chance_a['b'] == chance_b['a']:
-                        
-                        # emit arbitrage chance pair
-                        return [chance_a, chance_b]
-
-        # else return None
-        return None        
-
-    
-    def get_rate(self, contract, i=None, j=None):
+    def _get_exchange_rate(self, contract, i, j):
         """
         Returns the exchange rate between two currencies on an exchange designated by a given contract.
 
@@ -182,13 +90,100 @@ class Bot:
 
             return raw_price / j_decimals
         
+
+    def _swap(self, contract, i, j, amount):
+        """
+        Executes the swap operation within the smart contract.
+        """
+        pass
+
+
+    def _init_arbitrage_chances(self):
+        _arbitrage_chances = []
+
+        # iterate through each contract
+        for _contract in self.contracts:
+            # create contract data to handle arbitrage chances
+            _contract_data = {
+                'address': _contract['address'],
+                'arbitrageChances': []
+            }
+
+            # initialize each pair as false
+            for _coin_i in self.coins:
+                for _coin_j in self.coins:
+                    if _coin_i != _coin_j:
+                        _arbitrage_chance = {
+                            'i': _coin_i,
+                            'j': _coin_j,
+                            'status': False
+                        }
+
+                        _contract_data['arbitrageChances'].append(
+                            _arbitrage_chance
+                        )
+
+        return _arbitrage_chances
+
+
+    def _update_arbitrage_chance(self, arbitrage_chances, address, i, j, status):
+        # iterate through arbitrage chances and update status
+        for _arbitrage_chance in arbitrage_chances:
+            # update status based on address
+            if address == _arbitrage_chance['address']:
+                # iterate through each currency pair and update correct pair
+                for _currency_pair in _arbitrage_chance['arbitrageChances']:
+                    if _currency_pair['i'] == i and _currency_pair['j'] == j:
+                        _currency_pair['status'] = status
+
+    
+    def _update_arbitrage_chances(self, _arbitrage_chances):
+        for _contract in self.contracts:
+            for _coin_i in self.coins:
+                for _coin_j in self.coins:
+                    if _coin_i != _coin_j:
+                        # get exchange rate and check above min
+                        _rate = self.get_exchange_rate(
+                            _contract, 
+                            _coin_i, 
+                            _coin_j
+                        )
+
+                        if _rate > self.min_rate:
+                            self._update_arbitrage_chance(
+                                _arbitrage_chances,
+                                _contract['address'],
+                                _coin_i,
+                                _coin_j,
+                                True
+                            )
+                        else:
+                            self._update_arbitrage_chance(
+                                _arbitrage_chances,
+                                _contract['address'],
+                                _coin_i,
+                                _coin_j,
+                                False
+                            )
+
+
+        def _check_for_arbitrage(self):
+            pass
+
+    def run(self):
+        """
+        Main program loop for the bot.
+        """
+        _arbitrage_chances = self._init_arbitrage_chances()
+        _should_terminate = False
+
+        while not _should_terminate:
+            self._update_arbitrage_chances(_arbitrage_chances)
+            
+            
+
+
+    
+    
+        
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
-
-bot.test()
-
-# decentralized exchanges
-#
-# todo
-# uniswap
-# pancakeswap
-# 
