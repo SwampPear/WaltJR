@@ -91,7 +91,7 @@ class Bot:
             return raw_price / j_decimals
         
 
-    def _swap(self, contract, i, j, amount):
+    def _swap(self, i_address, j_address, i, j, amount):
         """
         Executes the swap operation within the smart contract.
         """
@@ -99,6 +99,9 @@ class Bot:
 
 
     def _init_arbitrage_chances(self):
+        """
+        Initializes the data structure to be used to store arbitrage chances.
+        """
         _arbitrage_chances = []
 
         # iterate through each contract
@@ -127,7 +130,9 @@ class Bot:
 
 
     def _update_arbitrage_chance(self, arbitrage_chances, address, i, j, status):
-        # iterate through arbitrage chances and update status
+        """
+        Updates an individual arbitrage chance.
+        """
         for _arbitrage_chance in arbitrage_chances:
             # update status based on address
             if address == _arbitrage_chance['address']:
@@ -138,6 +143,9 @@ class Bot:
 
     
     def _update_arbitrage_chances(self, _arbitrage_chances):
+        """
+        Updates all arbitrage chances.
+        """
         for _contract in self.contracts:
             for _coin_i in self.coins:
                 for _coin_j in self.coins:
@@ -167,8 +175,36 @@ class Bot:
                             )
 
 
-        def _check_for_arbitrage(self):
-            pass
+    def _check_for_inverse_arbitrage(self, arbitrage_chances, address, i, j):
+        """
+        Checks for an inverse arbitrage chance based on a given address, i, and j and makes
+        the swap.
+        """
+        for _arbitrage_data in arbitrage_chances:
+            for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
+                if _arbitrage_chance['status'] and _arbitrage_chance['i'] == j and _arbitrage_chance['j'] == i:
+                    self._swap(
+                        address,
+                        _arbitrage_data['address'],
+                        i,
+                        j
+                    )
+
+
+    def _execute_arbitrage(self, arbitrage_chances):
+        """
+        Executes arbitrage based on arbitrage chances.
+        """
+        for _arbitrage_data in arbitrage_chances:
+            for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
+                if _arbitrage_chance['status']:
+                    self._check_for_inverse_arbitrage(
+                        arbitrage_chances,
+                        _arbitrage_data['address'],
+                        _arbitrage_chance['i'],
+                        _arbitrage_chance['j']
+                    )
+        
 
     def run(self):
         """
