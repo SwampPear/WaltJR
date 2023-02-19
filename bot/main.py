@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import web3
 from dotenv import load_dotenv
 from eth import Eth
@@ -12,6 +13,13 @@ class Bot:
     def __init__(self, public_key, private_key, contract_db='contracts.json'):
         """
         Initializes the 'Bot' class.
+
+        Implemeneted for:
+        - curve
+        - uniswap     (coming soon)
+        - pancakeswap (coming soon)
+        - sushiswap   (coming soon)
+        - balancer    (coming soon)
 
         Arguments
         ---------
@@ -46,10 +54,38 @@ class Bot:
 
         
     def swap(self):
+        """
+        Executes the swap operation within the smart contract.
+        """
         pass
 
     
     def run(self):
+        """
+        Runs the main loop for this bot.
+        """
+        
+        should_stop = False
+
+        while not should_stop:
+            for contract in self.contracts:
+                # iterate through all contracts and check for arbitrage chances
+                self.check_contract_for_arbitrage(contract)
+
+                # check against local arbitrage chances
+                _arbitrage_chances = self.check_for_arbitrage()
+
+                # if chances are present, then execute swap
+                if _arbitrage_chances:
+                    # execute swap
+                    pass
+
+            time.sleep(30)
+
+    def test(self):
+        """
+        This function should only exist as a proxy during the implementation process.
+        """
         for contract in self.contracts:
             # iterate through all contracts and check for arbitrage chances
             self.check_contract_for_arbitrage(contract)
@@ -62,18 +98,6 @@ class Bot:
                 # execute swap
                 pass
 
-    def test(self):
-        """
-        Only used to test during implementation process
-        """
-
-        _contracts = self.contracts[0:2]
-
-        
-        for _contract in _contracts:
-            self.check_contract_for_arbitrage(_contract)
-            _arbitrage_chances = self.check_for_arbitrage()
-
                 
     def check_contract_for_arbitrage(self, contract):
         # iterate through each available currency
@@ -85,9 +109,12 @@ class Bot:
                 # pass if currency is same
                 if currency_a != currency_b:
                     rate = self.get_rate(contract, currency_a, currency_b)
-                    print(f'\033[92m{currency_a}\033[0m')
-                    print(f'\033[92m{currency_b}\033[0m')
-                    print(f'\033[91m{rate}\033[0m')
+                    print(f'\033[96m{currency_a} \u279C {currency_b}\033[0m')
+
+                    if rate > self.min_rate:
+                        print(f'\033[92m{rate}\033[0m')
+                    else:
+                        print(f'\033[91m{rate}\033[0m')
                     # append arbitrage chance
                     if rate > self.min_rate:
                         arbitrage = {
@@ -158,3 +185,10 @@ class Bot:
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 
 bot.test()
+
+# decentralized exchanges
+#
+# todo
+# uniswap
+# pancakeswap
+# 
