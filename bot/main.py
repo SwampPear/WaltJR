@@ -1,13 +1,13 @@
 import os
 import json
 import time
+import logging
 import web3
 from dotenv import load_dotenv
 from eth import Eth
 
 
 load_dotenv()
-
 
 class Bot:
     def __init__(self, public_key, private_key, contract_db='contracts.json'):
@@ -26,6 +26,13 @@ class Bot:
         public_key  (str) : the public key of the wallet to interact with
         private_key (str) : the private key of the wallet to interact with
         """
+        # logging
+        logging.basicConfig(
+            filename='bot.log', 
+            filemode='w', 
+            format='%(asctime)s - %(message)s',
+            datefmt='%d-%b-%y %H:%M:%S'
+        )
         
         # eth interaction
         self.eth = Eth(public_key, private_key)
@@ -52,7 +59,8 @@ class Bot:
     
     def _get_exchange_rate(self, contract, i, j):
         """
-        Returns the exchange rate between two currencies on an exchange designated by a given contract.
+        Returns the exchange rate between two currencies on an exchange designated by a given 
+        contract.
         """
         
         if contract['type'] == 'curve':
@@ -164,6 +172,9 @@ class Bot:
                                 True,
                                 _rate
                             )
+
+                            logging.info(f'WaltJR found an arbitrage chance: {_coin_i} -> {_coin_j} at {_rate}.')
+
                         else:
                             self._update_arbitrage_chance(
                                 _arbitrage_chances,
@@ -186,18 +197,27 @@ class Bot:
 
         for _arbitrage_data in arbitrage_chances:
             for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
-                if _arbitrage_chance['status'] and _arbitrage_chance['i'] == j and _arbitrage_chance['j'] == i and _arbitrage_chance['rate'] > _rate:
+                if (_arbitrage_chance['status'] and 
+                    _arbitrage_chance['i'] == j and 
+                    _arbitrage_chance['j'] == i and 
+                    _arbitrage_chance['rate'] > _rate
+                ):
                     _arbitrage_chance_found = True
                     _address = _arbitrage_data['address']
                     _rate = _arbitrage_chance['rate']
 
         if _arbitrage_chance_found:
+            logging.info(f'WaltJR found the maximum inverse arbitrage chance: {j} -> {i} at {_rate}.')
+
             self._swap(
                 address,
                 _address,
                 i,
                 j
             )
+
+        else:
+            logging.info(f'WaltJR failed to find the maximum inverse arbitrage chance.')
 
 
     def _execute_arbitrage(self, arbitrage_chances):
@@ -212,7 +232,9 @@ class Bot:
 
         for _arbitrage_data in arbitrage_chances:
             for _arbitrage_chance in _arbitrage_data['arbitrageChances']:
-                if _arbitrage_chance['status'] and _arbitrage_chance['rate'] > _rate:
+                if (_arbitrage_chance['status'] and 
+                    _arbitrage_chance['rate'] > _rate
+                ):
                     _arbitrage_chance_found = True
                     _address = _arbitrage_data['address']
                     _i = _arbitrage_chance['i']
@@ -220,12 +242,17 @@ class Bot:
                     _rate = _arbitrage_chance['rate']
 
         if _arbitrage_chance_found:
+            logging.info(f'WaltJR found the maximum arbitrage chance: {_i} -> {_j} at {_rate}.')
+
             self._check_for_inverse_arbitrage(
                 arbitrage_chances,
                 _address,
                 _i,
                 _j
             )
+
+        else:
+            logging.info(f'WaltJR failed to find an arbitrage chance.')
         
 
     def run(self):
@@ -236,18 +263,25 @@ class Bot:
         _should_terminate = False
 
         while not _should_terminate:
+            logging.info('WaltJR initiated.')
+
             self._update_arbitrage_chances(_arbitrage_chances)
             self._execute_arbitrage(_arbitrage_chances)
 
             _should_terminate = True
 
-            
-            
+        logging.info('WaltJR terminated.')
 
 
+
+if __name__ == '__main__':
+    logging.basicConfig(
+        filename='bot.log', 
+        filemode='w', 
+        format='%(asctime)s - %(message)s',
+        datefmt='%d-%b-%y %H:%M:%S',
+        level = logging.INFO
+    )
     
-    
-        
-bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
-
-bot.run()
+    bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
+    bot.run()
