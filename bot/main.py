@@ -26,14 +26,6 @@ class Bot:
         public_key  (str) : the public key of the wallet to interact with
         private_key (str) : the private key of the wallet to interact with
         """
-        # logging
-        logging.basicConfig(
-            filename='bot.log', 
-            filemode='w', 
-            format='%(asctime)s - %(message)s',
-            datefmt='%d-%b-%y %H:%M:%S'
-        )
-        
         # eth interaction
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
@@ -87,7 +79,7 @@ class Bot:
             if j == 'usdt': j_decimals = 10 ** 6
 
             raw_price = contract['contract_impl'].get_function_by_signature(
-                contract['priceSignature']
+                'get_dy_underlying(int128,int128,uint256)'
             )(a, b, i_decimals).call()
 
             return raw_price / j_decimals

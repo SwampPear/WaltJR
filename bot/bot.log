@@ -1,16 +1,6 @@
-18-Feb-23 22:42:20 - WaltJR initiated.
-18-Feb-23 22:42:21 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000871068581314.
-18-Feb-23 22:42:21 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000118.
-18-Feb-23 22:42:21 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000871068581314.
-18-Feb-23 22:42:21 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000118.
-18-Feb-23 22:42:22 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000871068581314.
-18-Feb-23 22:42:22 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000118.
-18-Feb-23 22:42:22 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000871068581314.
-18-Feb-23 22:42:22 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000118.
-18-Feb-23 22:42:23 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000871068581314.
-18-Feb-23 22:42:23 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000118.
-18-Feb-23 22:42:23 - WaltJR found an arbitrage chance: usdt -> dai at 1.000292180323337.
-18-Feb-23 22:42:23 - WaltJR found an arbitrage chance: usdt -> usdc at 1.000211.
-18-Feb-23 22:42:23 - WaltJR found the maximum arbitrage chance: usdt -> dai at 1.000292180323337.
-18-Feb-23 22:42:23 - WaltJR failed to find the inverse maximum arbitrage chance.
-18-Feb-23 22:42:23 - WaltJR terminated.
+19-Feb-23 21:39:07 - WaltJR initiated.
+19-Feb-23 21:39:08 - WaltJR found an arbitrage chance: usdt -> dai at 1.0000510435464784.
+19-Feb-23 21:39:08 - WaltJR found an arbitrage chance:          usdt -> usdc at 1.000066.
+19-Feb-23 21:39:08 - WaltJR found the maximum arbitrage chance: usdt -> usdc at 1.000066.
+19-Feb-23 21:39:08 - WaltJR failed to find the maximum inverse arbitrage chance.
+19-Feb-23 21:39:08 - WaltJR terminated.
