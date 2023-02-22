@@ -71,12 +71,12 @@ class Bot:
             i_decimals = 0
             j_decimals = 0
 
-            if i == 'dai': i_decimals = 10 ** 18
-            if j == 'dai': j_decimals = 10 ** 18
-            if i == 'usdc': i_decimals = 10 ** 6
-            if j == 'usdc': j_decimals = 10 ** 6
-            if i == 'usdt': i_decimals = 10 ** 6
-            if j == 'usdt': j_decimals = 10 ** 6
+            if i == 'dai': i_decimals = 10 ** 24
+            if j == 'dai': j_decimals = 10 ** 24
+            if i == 'usdc': i_decimals = 10 ** 12
+            if j == 'usdc': j_decimals = 10 ** 12
+            if i == 'usdt': i_decimals = 10 ** 12
+            if j == 'usdt': j_decimals = 10 ** 12
 
             raw_price = contract['contract_impl'].get_function_by_signature(
                 'get_dy_underlying(int128,int128,uint256)'
@@ -165,7 +165,7 @@ class Bot:
                                 _rate
                             )
 
-                            logging.info(f'WaltJR found an arbitrage chance: {_coin_i} -> {_coin_j} at {_rate}.')
+                            logging.info(f'arbitrage chance found --------------- {_coin_i} -> {_coin_j} at {_rate}')
 
                         else:
                             self._update_arbitrage_chance(
@@ -199,7 +199,7 @@ class Bot:
                     _rate = _arbitrage_chance['rate']
 
         if _arbitrage_chance_found:
-            logging.info(f'WaltJR found the maximum inverse arbitrage chance: {j} -> {i} at {_rate}.')
+            logging.info(f'maximum inverse arbitrage chance found -- {j} -> {i} at {_rate}')
 
             self._swap(
                 address,
@@ -209,7 +209,7 @@ class Bot:
             )
 
         else:
-            logging.info(f'WaltJR failed to find the maximum inverse arbitrage chance.')
+            logging.info(f'failed to find maximum inverse arbitrage chance')
 
 
     def _execute_arbitrage(self, arbitrage_chances):
@@ -234,7 +234,7 @@ class Bot:
                     _rate = _arbitrage_chance['rate']
 
         if _arbitrage_chance_found:
-            logging.info(f'WaltJR found the maximum arbitrage chance: {_i} -> {_j} at {_rate}.')
+            logging.info(f'maximum arbitrage chance found ------- {_i} -> {_j} at {_rate}')
 
             self._check_for_inverse_arbitrage(
                 arbitrage_chances,
@@ -244,7 +244,7 @@ class Bot:
             )
 
         else:
-            logging.info(f'WaltJR failed to find an arbitrage chance.')
+            logging.info(f'failed to find arbitrage chance')
         
 
     def run(self):
@@ -265,15 +265,13 @@ class Bot:
         logging.info('WaltJR terminated.')
 
 
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        filename='bot.log', 
-        filemode='w', 
-        format='%(asctime)s - %(message)s',
-        datefmt='%d-%b-%y %H:%M:%S',
-        level = logging.INFO
-    )
+logging.basicConfig(
+    filename='bot.log', 
+    filemode='w', 
+    format='%(asctime)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+    level = logging.INFO
+)
     
-    bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
-    bot.run()
+bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
+bot.run()
