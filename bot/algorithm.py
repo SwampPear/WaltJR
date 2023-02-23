@@ -173,8 +173,7 @@ class Graph:
         are of the same data class. The algorithm then computes the maximum
         product of each trail and returns the maximum. The circuit must begin
         and end on a vertex with the same data class and data enumerator and
-        each edge and vertex may only be traversed once. Essentially each
-        circuit must be directional variant of a Hamiltonian circuit.
+        each edge and vertex may only be traversed once.
         """
 
         _start_vertex = vertex
