@@ -30,8 +30,10 @@ class Vertex:
             weight (float): the weight to set for the edge
             vertex (Vertex): the vertex directed to
         """
+
+        self.weights.insert(len(self.weights), [weight, vertex])
         
-        self.weights.append([weight, vertex])
+        #self.weights.append([weight, vertex])
 
         
 class Graph:
@@ -164,7 +166,7 @@ class Graph:
                         _exchange_match = self.vertices[j].data_enum == _exchange
 
                         if _pair_match and _exchange_match:
-                            self.vertices[i].weights.insert(len(self.vertices[i].weights), [_rate, self.vertices[j]])
+                            self.vertices[i].emplace(_rate, self.vertices[j])
 
 
     def _initialize_edges_on_currency(self, data):
@@ -178,9 +180,7 @@ class Graph:
                 _data_enum_neq = self.vertices[i].data_enum != self.vertices[j].data_enum
                 
                 if _data_class_eq and _data_enum_neq:
-                    self.vertices[i].weights.insert(len(self.vertices[i].weights), [1, self.vertices[j]])
-                    
-                    
+                    self.vertices[i].emplace(1, self.vertices[j])
         
 
     def _initialize_edges(self, data):
