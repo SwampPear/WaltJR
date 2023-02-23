@@ -171,7 +171,16 @@ class Graph:
         """
         Initializes connector edges on same currencies.
         """
-        pass
+
+        for i in range(0, len(self.vertices)):
+            for j in range(0, len(self.vertices)):
+                _data_class_eq = self.vertices[i].data_class == self.vertices[j].data_class
+                _data_enum_neq = self.vertices[i].data_enum != self.vertices[j].data_enum
+                
+                if _data_class_eq and _data_enum_neq:
+                    self.vertices[i].weights.insert(len(self.vertices[i].weights), [1, self.vertices[j]])
+                    
+                    
         
 
     def _initialize_edges(self, data):
