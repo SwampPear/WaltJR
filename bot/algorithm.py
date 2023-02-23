@@ -167,13 +167,31 @@ class Graph:
         self._initialize_edges(data)
 
 
+    def _compute_unique_data_class_vertices(self):
+        """
+        Computes a set of vertices where each vertex has a unique data
+        class.
+        """
+
+        _vertices = []
+        _set_data_classes = []
+
+        for _vertex in self.vertices:
+            if _vertex.data_class not in _set_data_classes:
+                _vertices.append(_vertex)
+
+                _set_data_classes.append(_vertex.data_class)
+
+        return _vertices
+
+
     def _compute_optimal_path_for_vertex(self):
         """
         Computes the maximum weight path cycle for each vertex in this
         Graph.
         """
-        
-        pass
+
+        _unique_data_class_vertices = self._compute_unique_data_class_vertices()
 
 
     def _compute_max_weight_optimal_path(self, data):
