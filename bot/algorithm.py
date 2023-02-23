@@ -200,7 +200,10 @@ class Graph:
         Computes the optimal path cycle with the maximum weight.
         """
 
-        pass
+        _data = self._compute_optimal_path_for_vertex()
+        _max_weight_optimal_path = self._compute_max_weight_optimal_path(_data)
+
+        return _max_weight_optimal_path
 
 
 data = [
