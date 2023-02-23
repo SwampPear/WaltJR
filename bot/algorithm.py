@@ -167,6 +167,42 @@ class Graph:
         self._initialize_edges(data)
 
 
+    def _compute_optimal_path_for_vertex(self):
+        """
+        Computes the maximum weight path cycle for each vertex in this
+        Graph.
+        """
+        
+        pass
+
+
+    def _compute_max_weight_optimal_path(self, data):
+        """
+        Computes the maximum weight path cycle for each optimized
+        cycle.
+        """
+
+        _max_weight = 0
+        _optimal_path = {}
+
+        for _path in data:
+            _weight = _data['weight']
+
+            if _weight > _max_weight:
+                _max_weight = _weight
+                _optimal_path = _data['path']
+
+        return _optimal_path
+
+
+    def _compute_optimal_path(self):
+        """
+        Computes the optimal path cycle with the maximum weight.
+        """
+
+        pass
+
+
 data = [
     {
         'exchange': 'curve',
