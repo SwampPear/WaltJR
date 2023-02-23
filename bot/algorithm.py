@@ -167,31 +167,30 @@ class Graph:
         self._initialize_edges(data)
 
 
-    def _compute_unique_data_class_vertices(self):
+    def _compute_optimal_path_for_vertex(self, vertex):
         """
-        Computes a set of vertices where each vertex has a unique data
-        class.
+        Finds each circuit in the graph where the first and last vertices
+        are of the same data class. The algorithm then computes the maximum
+        product of each trail and returns the maximum.
         """
 
-        _vertices = []
-        _set_data_classes = []
-
-        for _vertex in self.vertices:
-            if _vertex.data_class not in _set_data_classes:
-                _vertices.append(_vertex)
-
-                _set_data_classes.append(_vertex.data_class)
-
-        return _vertices
+        print('asdf')
 
 
-    def _compute_optimal_path_for_vertex(self):
+    def _compute_optimal_path_for_vertices(self):
         """
         Computes the maximum weight path cycle for each vertex in this
         Graph.
         """
 
-        _unique_data_class_vertices = self._compute_unique_data_class_vertices()
+        _data = []
+
+        for _vertex in self.vertices:
+            _vertex_data = self._compute_optimal_path_for_vertex(_vertex)
+
+            _data.append(_vertex_data)
+
+        return _data
 
 
     def _compute_max_weight_optimal_path(self, data):
@@ -204,11 +203,11 @@ class Graph:
         _optimal_path = {}
 
         for _path in data:
-            _weight = _data['weight']
+            _weight = 1#_path['weight']
 
             if _weight > _max_weight:
                 _max_weight = _weight
-                _optimal_path = _data['path']
+                _optimal_path = []#_path['path']
 
         return _optimal_path
 
@@ -218,10 +217,19 @@ class Graph:
         Computes the optimal path cycle with the maximum weight.
         """
 
-        _data = self._compute_optimal_path_for_vertex()
+        _data = self._compute_optimal_path_for_vertices()
         _max_weight_optimal_path = self._compute_max_weight_optimal_path(_data)
 
         return _max_weight_optimal_path
+
+
+    def find_arbitrage(self):
+        """
+        Returns the optimal arbitrage opportunity based on a set
+        of exchanges and exchange rates.
+        """
+
+        return self._compute_optimal_path()
 
 
 data = [
@@ -283,6 +291,7 @@ data = [
 ]
 
 g = Graph(data)
+g.find_arbitrage()
 print(g)
     
 
