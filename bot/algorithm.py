@@ -4,20 +4,21 @@ class Vertex:
     Graph class.
 
     Attributes
+        weights (Tuple(float, Vertex)[])
         data_class (str): the class of data that a vertex could be
         data_enum (str): data individualizing each vertex
     """
     
-    def __init__(self, data_class, data_enum, weights=[]):
+    def __init__(self, data_class, data_enum):
         """
         Initializes the Vertex class.
 
         Parameters
-            weights (Tuple(float, Vertex)): weights defining edges
+            weights (Tuple(float, Vertex)[]): weights defining edges
             data_class (str): the class of data that a vertex could be
             data_enum (str): data individualizing each vertex
         """
-        self.weights = weights
+        self.weights = []
         self.data_class = data_class
         self.data_enum = data_enum
 
@@ -30,7 +31,7 @@ class Vertex:
             vertex (Vertex): the vertex directed to
         """
         
-        self.weights.append((weight, vertex))
+        self.weights.append([weight, vertex])
 
         
 class Graph:
@@ -70,8 +71,25 @@ class Graph:
         """
 
         self.vertices = []
+        self._initialize_graph(data)
 
 
+    def __str__(self):
+        """
+        String representation of the Graph class.
+        """
+
+        _output = ''
+
+        for _vertex in self.vertices:
+            _output += f'{_vertex.data_class} ({_vertex.data_enum})\n'
+
+            for _weight in _vertex.weights:
+                _output += f'-> {_weight[0]} -> {_weight[1].data_class} ({_weight[1].data_enum})\n'
+    
+        return _output
+    
+        
     def add_vertex(self, data_class, data_enum):
         """
         Adds a vertex to vertices.
@@ -82,16 +100,27 @@ class Graph:
         self.vertices.append(_vertex)
 
 
-    def get_vertex(self, data_class, data_enum):
+    def get_vertex(self, data_class=None, data_enum=None):
         """
-        Gets a vertex from this Graph object.
+        Gets a vertex from this Graph object
         """
+
+        _query_results = []
+
+        if data_class is None and data_enum is None:
+            return _query_results
 
         for _vertex in self.vertices:
-            if _vertex.data_class == data_class and _vertex.data_enum == data_enum:
-                return _vertex
+            if data_class is None and _vertex.data_enum == data_enum:
+                _query_results.append(_vertex)
+                
+            elif _vertex.data_class == data_class and data_enum is None:
+                _query_results.append(_vertex)
+                
+            elif _vertex.data_class == data_class and _vertex.data_enum == data_enum:
+                _query_results.append(_vertex)
 
-        return None
+        return _query_results
 
 
     def remove_vertex(self, data_class, data_enum):
@@ -109,17 +138,69 @@ class Graph:
         Initializes the vertices for this graph.
         """
 
-        for _exchange in data:
-            for _currency in _exchange['currencies']:
-                self.graph.add_vertex(_currency, _exchange['exchange'])
+        for _data in data:
+            _exchange = _data['exchange']
+            
+            for _currency in _data['currencies']:
+                self.add_vertex(_currency, _exchange)
 
+
+    def _initialize_edges_on_pairs(self, data):
+        """
+        Initializes the edges for this graph based on currency pairs.
+        """
+        for _data in data:
+            for i in range(0, len(self.vertices)):
+                for j in range(0, len(self.vertices)):
+            
+                    _exchange = _data['exchange']
+
+                    for _pair in _data['pairs']:
+                        _a = _pair['a']
+                        _b = _pair['b']
+                        _rate = _pair['rate']
+
+                        _pair_match = self.vertices[i].data_class == _a and self.vertices[j].data_class == _b
+                        _exchange_match = self.vertices[j].data_enum == _exchange
+
+                        if _pair_match and _exchange_match:
+                            self.vertices[i].weights.insert(len(self.vertices[i].weights), [_rate, self.vertices[j]])
+
+
+    def _initialize_edges_on_currency(self, data):
+        """
+        Initializes connector edges on same currencies.
+        """
+        """
+        for _data in data:
+            for _pair in _data['pairs']:
+                _a = _pair['a']
+                _b = _pair['b']
+                _rate = _pair['rate']
+
+                for _vertex_a in self.vertices:
+                    for _vertex_b in self.vertices:
+                        _exchange_neq = _vertex_a.data_enum != _vertex_b.data_enum
+                        _currency_neq = _vertex_a.data_class != _vertex_b.data_class
+                        
+                        if _exchange_neq and _currency_neq:
+                            if _vertex_a.data_class == _a and _vertex_b.data_class == _b:
+                                _vertex_a.emplace(_rate, _vertex_b)
+                                print(_a)
+                                print(_b)
+                                print(_rate)
+        """
+        pass
+        
 
     def _initialize_edges(self, data):
         """
         Initializes the edges for this graph based on the data pattern.
         """
 
-        pass
+        self._initialize_edges_on_pairs(data)
+        #self._initialize_edges_on_currency(data)
+                    
     
         
     def _initialize_graph(self, data):
@@ -136,16 +217,47 @@ data = [
         'exchange': 'curve',
         'currencies': [
             'dai',
-            'usdc'
+            'usdc',
+            'usdt'
         ],
         'pairs': [
             {
                 'a': 'dai',
-                'b': 'usdc'
+                'b': 'usdc',
+                'rate': 1
+            },
+            {
+                'a': 'dai',
+                'b': 'usdt',
+                'rate': 2
+            },
+            {
+                'a': 'usdc',
+                'b': 'dai',
+                'rate': 3
+            },
+            {
+                'a': 'usdc',
+                'b': 'usdt',
+                'rate': 4
+            },
+            {
+                'a': 'usdt',
+                'b': 'dai',
+                'rate': 5
+            },
+            {
+                'a': 'usdt',
+                'b': 'usdc',
+                'rate': 6
             }
         ]
     }
 ]
+
+g = Graph(data)
+print(g)
+    
 
         
 
