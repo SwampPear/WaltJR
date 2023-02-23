@@ -14,10 +14,10 @@ class Vertex:
         Initializes the Vertex class.
 
         Parameters
-            weights (Tuple(float, Vertex)[]): weights defining edges
             data_class (str): the class of data that a vertex could be
             data_enum (str): data individualizing each vertex
         """
+        
         self.weights = []
         self.data_class = data_class
         self.data_enum = data_enum
@@ -33,8 +33,6 @@ class Vertex:
 
         self.weights.insert(len(self.weights), [weight, vertex])
         
-        #self.weights.append([weight, vertex])
-
         
 class Graph:
     """
@@ -102,39 +100,6 @@ class Graph:
         self.vertices.append(_vertex)
 
 
-    def get_vertex(self, data_class=None, data_enum=None):
-        """
-        Gets a vertex from this Graph object
-        """
-
-        _query_results = []
-
-        if data_class is None and data_enum is None:
-            return _query_results
-
-        for _vertex in self.vertices:
-            if data_class is None and _vertex.data_enum == data_enum:
-                _query_results.append(_vertex)
-                
-            elif _vertex.data_class == data_class and data_enum is None:
-                _query_results.append(_vertex)
-                
-            elif _vertex.data_class == data_class and _vertex.data_enum == data_enum:
-                _query_results.append(_vertex)
-
-        return _query_results
-
-
-    def remove_vertex(self, data_class, data_enum):
-        """
-        Removes a vertex from this Graph object.
-        """
-
-        _vertex = self.get_vertex(data_class, data_enum)
-
-        self.vertices.remove(_vertex)
-
-        
     def _initialize_vertices(self, data):
         """
         Initializes the vertices for this graph.
