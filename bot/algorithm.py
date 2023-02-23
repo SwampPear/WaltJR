@@ -171,25 +171,6 @@ class Graph:
         """
         Initializes connector edges on same currencies.
         """
-        """
-        for _data in data:
-            for _pair in _data['pairs']:
-                _a = _pair['a']
-                _b = _pair['b']
-                _rate = _pair['rate']
-
-                for _vertex_a in self.vertices:
-                    for _vertex_b in self.vertices:
-                        _exchange_neq = _vertex_a.data_enum != _vertex_b.data_enum
-                        _currency_neq = _vertex_a.data_class != _vertex_b.data_class
-                        
-                        if _exchange_neq and _currency_neq:
-                            if _vertex_a.data_class == _a and _vertex_b.data_class == _b:
-                                _vertex_a.emplace(_rate, _vertex_b)
-                                print(_a)
-                                print(_b)
-                                print(_rate)
-        """
         pass
         
 
@@ -199,7 +180,7 @@ class Graph:
         """
 
         self._initialize_edges_on_pairs(data)
-        #self._initialize_edges_on_currency(data)
+        self._initialize_edges_on_currency(data)
                     
     
         
@@ -224,32 +205,47 @@ data = [
             {
                 'a': 'dai',
                 'b': 'usdc',
-                'rate': 1
+                'rate': 1.5
             },
             {
                 'a': 'dai',
                 'b': 'usdt',
-                'rate': 2
+                'rate': 2.5
             },
             {
                 'a': 'usdc',
                 'b': 'dai',
-                'rate': 3
+                'rate': 3.5
             },
             {
                 'a': 'usdc',
                 'b': 'usdt',
-                'rate': 4
+                'rate': 4.5
             },
             {
                 'a': 'usdt',
                 'b': 'dai',
-                'rate': 5
+                'rate': 5.5
             },
             {
                 'a': 'usdt',
                 'b': 'usdc',
-                'rate': 6
+                'rate': 6.5
+            }
+        ]
+    },
+    {
+        'exchange': 'uniswap',
+        'currencies': [
+            'dai',
+            'usdc',
+            'usdt'
+        ],
+        'pairs': [
+            {
+                'a': 'dai',
+                'b': 'usdc',
+                'rate': 7.5
             }
         ]
     }
