@@ -18,14 +18,14 @@ class Vertex:
             data_enum (str): data individualizing each vertex
         """
         
-        self.weights = []
+        self.edges = []
         self.data_class = data_class
         self.data_enum = data_enum
 
         
     def __eq__(self, other):
         """
-        Equality operator overload.
+        Equality operator.
         """
         _class_eq = self.data_class == other.data_class
         _enum_eq = self.data_enum == other.data_enum
@@ -45,7 +45,7 @@ class Vertex:
             vertex (Vertex): the vertex directed to
         """
 
-        self.weights.insert(len(self.weights), [weight, vertex])
+        self.edges.insert(len(self.weights), [weight, vertex])
         
         
 class Graph:
