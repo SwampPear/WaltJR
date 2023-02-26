@@ -186,11 +186,6 @@ class Graph:
         Recursive step for algorithm to find all circuits in this Graph object.
         """
 
-        #_path_history = []
-
-        #for i in range(0, len(previous_path_history)):
-        #    _path_history.append(previous_path_history[i])
-
         for i in range(0, len(vertex.weights)):
             # copy path history
             _path_history = []
@@ -261,12 +256,23 @@ class Graph:
             _path_history
         )
 
-        # test
+        _max_total_edge_weight = 0
+        _optimal_path = []
+        
         for _path in _paths:
-            print(' ')
+            _total_edge_weight = 1
             
             for _edge in _path:
-                print(f"-> {_edge['weight']} {_edge['vertex'].data_class} ({_edge['vertex'].data_enum})")
+                _total_edge_weight *= _edge['weight']
+
+            if _total_edge_weight > _max_total_edge_weight:
+                _max_total_edge_weight = _total_edge_weight
+                _optimal_path = _path
+
+        return [
+            _max_total_edge_weight,
+            _optimal_path
+        ]
         
     
     def _compute_optimal_path_for_vertices(self):
@@ -278,10 +284,10 @@ class Graph:
         _data = []
 
         for _vertex in self.vertices:
-            _vertex_data = self._compute_optimal_path_for_vertex(_vertex)
+            _path_data = self._compute_optimal_path_for_vertex(_vertex)
 
-            _data.append(_vertex_data)
-
+            _data.append(_path_data)
+    
         return _data
 
 
@@ -292,14 +298,14 @@ class Graph:
         """
 
         _max_weight = 0
-        _optimal_path = {}
+        _optimal_path = []
 
         for _path in data:
-            _weight = 1#_path['weight']
+            _weight = _path[0]
 
             if _weight > _max_weight:
                 _max_weight = _weight
-                _optimal_path = []#_path['path']
+                _optimal_path = _path
 
         return _optimal_path
 
@@ -368,8 +374,14 @@ data = [
 ]
 
 g = Graph(data)
-g.find_arbitrage()
-print(g)    
+optimal_path = g.find_arbitrage()
+print(optimal_path[0])
+
+for vertex in optimal_path[1]:
+    print('')
+
+    print(vertex)
+#print(g)    
 
         
 
