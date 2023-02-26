@@ -22,6 +22,20 @@ class Vertex:
         self.data_class = data_class
         self.data_enum = data_enum
 
+        
+    def __eq__(self, other):
+        """
+        Equality operator overload.
+        """
+        _class_eq = self.data_class == other.data_class
+        _enum_eq = self.data_enum == other.data_enum
+        
+        if _class_eq and _enum_eq:
+            return True
+
+        return False
+              
+
     def emplace(self, weight, vertex):
         """
         Adds a new edge to the weight graph.
@@ -167,6 +181,62 @@ class Graph:
         self._initialize_edges(data)
 
 
+    def _r_compute_optimal_path_for_vertex(self, start_vertex, vertex, paths, previous_path_history):
+        """
+        Recursive step for algorithm to find all circuits in this Graph object.
+        """
+
+        #_path_history = []
+
+        #for i in range(0, len(previous_path_history)):
+        #    _path_history.append(previous_path_history[i])
+
+        for i in range(0, len(vertex.weights)):
+            # copy path history
+            _path_history = []
+            
+            for j in range(0, len(previous_path_history)):
+                _path_history.append(previous_path_history[j])
+                
+            # get weight and prospective next vertex
+            _weight = vertex.weights[i][0]
+            _next_vertex = vertex.weights[i][1]
+
+            # determine if the edge has already been traversed
+            _edge_traversed = False
+
+            if len(_path_history) > 1:
+                for k in range(0, len(_path_history) - 1):
+                    _vertex_a_eq = _path_history[k]['vertex'] == vertex
+                    _vertex_b_eq = _path_history[k + 1]['vertex'] == _next_vertex
+
+                    if _vertex_a_eq and _vertex_b_eq:
+                        _edge_traversed = True
+
+            # execute if edge hasn't been traversed
+            if not _edge_traversed:
+                if _next_vertex == start_vertex:
+                    _path_history.append({
+                        'weight': _weight,
+                        'vertex': _next_vertex
+                    })
+
+                    paths.insert(len(paths), _path_history)
+
+                else:
+                    _path_history.append({
+                        'weight': _weight,
+                        'vertex': _next_vertex
+                    })
+
+                    self._r_compute_optimal_path_for_vertex(
+                        start_vertex,
+                        _next_vertex,
+                        paths,
+                        _path_history
+                    )
+                    
+    
     def _compute_optimal_path_for_vertex(self, vertex):
         """
         Finds each circuit in the graph where the first and last vertices
@@ -176,9 +246,29 @@ class Graph:
         each edge and vertex may only be traversed once.
         """
 
-        _start_vertex = vertex
+        _paths = []
+        _path_history = [
+            {
+                'weight': 1,
+                'vertex': vertex
+            }
+        ]
 
+        self._r_compute_optimal_path_for_vertex(
+            vertex,
+            vertex,
+            _paths,
+            _path_history
+        )
 
+        # test
+        for _path in _paths:
+            print(' ')
+            
+            for _edge in _path:
+                print(f"-> {_edge['weight']} {_edge['vertex'].data_class} ({_edge['vertex'].data_enum})")
+        
+    
     def _compute_optimal_path_for_vertices(self):
         """
         Computes the maximum weight path cycle for each vertex in this
@@ -274,28 +364,12 @@ data = [
                 'rate': 6.5
             }
         ]
-    },
-    {
-        'exchange': 'uniswap',
-        'currencies': [
-            'dai',
-            'usdc',
-            'usdt'
-        ],
-        'pairs': [
-            {
-                'a': 'dai',
-                'b': 'usdc',
-                'rate': 7.5
-            }
-        ]
     }
 ]
 
 g = Graph(data)
 g.find_arbitrage()
-print(g)
-    
+print(g)    
 
         
 
