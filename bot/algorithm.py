@@ -170,7 +170,6 @@ class Graph:
         self._initialize_edges_on_pairs(data)
         self._initialize_edges_on_currency(data)
                     
-    
         
     def _initialize_graph(self, data):
         """
@@ -194,8 +193,8 @@ class Graph:
                 _path_history.append(previous_path_history[j])
                 
             # get weight and prospective next vertex
-            _weight = vertex.weights[i][0]
-            _next_vertex = vertex.weights[i][1]
+            _weight = vertex.edges[i][0]
+            _next_vertex = vertex.edges[i][1]
 
             # determine if the edge has already been traversed
             _edge_traversed = False
@@ -291,16 +290,18 @@ class Graph:
         return _data
 
 
-    def _compute_max_weight_optimal_path(self, data):
+    def _compute_optimal_path(self):
         """
         Computes the maximum weight path cycle for each optimized
-        cycle.
+        circuit.
         """
+
+        _data = self._compute_optimal_path_for_vertices()
 
         _max_weight = 0
         _optimal_path = []
 
-        for _path in data:
+        for _path in _data:
             _weight = _path[0]
 
             if _weight > _max_weight:
@@ -308,17 +309,6 @@ class Graph:
                 _optimal_path = _path
 
         return _optimal_path
-
-
-    def _compute_optimal_path(self):
-        """
-        Computes the optimal path cycle with the maximum weight.
-        """
-
-        _data = self._compute_optimal_path_for_vertices()
-        _max_weight_optimal_path = self._compute_max_weight_optimal_path(_data)
-
-        return _max_weight_optimal_path
 
 
     def find_arbitrage(self):
