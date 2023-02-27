@@ -45,7 +45,7 @@ class Vertex:
             vertex (Vertex): the vertex directed to
         """
 
-        self.edges.insert(len(self.weights), [weight, vertex])
+        self.edges.insert(len(self.edges), [weight, vertex])
         
         
 class Graph:
@@ -148,7 +148,7 @@ class Graph:
                             self.vertices[i].emplace(_rate, self.vertices[j])
 
 
-    def _initialize_edges_on_currency(self, data):
+    def _initialize_edges_on_currency(self):
         """
         Initializes connector edges on same currencies.
         """
@@ -168,7 +168,7 @@ class Graph:
         """
 
         self._initialize_edges_on_pairs(data)
-        self._initialize_edges_on_currency(data)
+        self._initialize_edges_on_currency()
                     
         
     def _initialize_graph(self, data):
@@ -185,7 +185,7 @@ class Graph:
         Recursive step for algorithm to find all circuits in this Graph object.
         """
 
-        for i in range(0, len(vertex.weights)):
+        for i in range(0, len(vertex.edges)):
             # copy path history
             _path_history = []
             
@@ -318,7 +318,7 @@ class Graph:
         """
 
         return self._compute_optimal_path()
-
+    
 
 data = [
     {
@@ -365,14 +365,7 @@ data = [
 
 g = Graph(data)
 optimal_path = g.find_arbitrage()
-print(optimal_path[0])
-
-for vertex in optimal_path[1]:
-    print('')
-
-    print(vertex)
-#print(g)    
-
+print(optimal_path)
         
 
 
