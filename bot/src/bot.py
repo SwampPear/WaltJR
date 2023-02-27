@@ -100,16 +100,23 @@ class Bot:
         return _graph
 
 
-    def _get_exchange_rate(self, contract, i, j):
+    def _get_exchange_rate(self, exchange, i, j):
         """
         Gets the current exchange rate at some exchange.
         """
 
-        if contract['exchange'] == 'curve':
+        _contract = []
+        
+        for _temp_contract in self.contracts:
+            if exchange == _temp_contract['exchange']:
+                _contract = _temp_contract
+            
+
+        if exchange == 'curve':
             _a = 0
             _b = 0
 
-            for _coin in contract['coins']:
+            for _coin in _contract['coins']:
                 if _coin['name'] == i:
                     _a = _coin['number']
 
@@ -126,7 +133,7 @@ class Bot:
             if i == 'usdt': _i_decimals = 10 ** 6
             if j == 'usdt': _j_decimals = 10 ** 6
 
-            _raw_price = contract['contract_impl'].get_function_by_signature(
+            _raw_price = _contract['contract_impl'].get_function_by_signature(
                 'get_dy_underlying(int128,int128,uint256)'
             )(a, b, _i_decimals).call()
 
@@ -137,10 +144,24 @@ class Bot:
     def _update_graph(self):
         """
         Updates the Graph object at some time interval with new exchange rate
-        data for that time.
+        data for that time. Iterates through the vertices in graph and updates
+        edges according to exchange rate.
         """
-        
-        pass
+
+        for _vertex in self.graph.vertices:
+            _exchange = _vertex.data_enum
+            _a = _vertex
+            
+            for _edge in _vertex.edges:
+                _weight = _edge[0]
+                
+                _next_vertex = _edge[1]
+                _b = _next_vertex.data_class
+
+                _rate = self._get_exchange_rate(_exchange, _a, _b)
+
+                # update edge weight
+                _edge[0] = _rate
 
 
     def _compute_optimal_path(self):
