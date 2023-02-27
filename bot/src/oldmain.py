@@ -275,3 +275,4 @@ logging.basicConfig(
 
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 bot.run()
+B

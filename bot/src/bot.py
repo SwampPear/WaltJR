@@ -1,4 +1,5 @@
 import json
+import logging
 import web3
 from dotenv import load_dotenv()
 from eth import Eth
@@ -18,10 +19,16 @@ class Bot:
         Initializes this Bot object.
         """
 
+        logging.info('WaltJR initialized')
+        
+
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
+        logging.info('Contracts initialized')
         self.contracts = self._init_contracts(contracts_file)
+
+        logging.info('Graph initialized')
         self.graph = self._init_graph()
 
 
@@ -64,6 +71,15 @@ class Bot:
 
         return _graph
 
+
+    def _get_exchange_rate(self, exchange, i, j):
+        """
+        Gets the current exchange rate at some exchange.
+        """
+
+        pass
+    
+
     def _update_graph(self):
         """
         Updates the Graph object at some time interval with new exchange rate
@@ -71,4 +87,28 @@ class Bot:
         """
         
         pass
-        
+
+
+    def _compute_optimal_path(self):
+        """
+        Computes the optimal path of a swap to take place and returns it,
+        otherwise returns None.
+        """
+
+        pass
+
+
+    def _execute_swap(self, path):
+        """
+        Executes a swap among successive vertices in a path.
+        """
+
+        pass
+
+
+    def run(self):
+        """
+        Main program loop for the Bot class.
+        """
+
+        pass
