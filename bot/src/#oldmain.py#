@@ -10,7 +10,7 @@ from eth import Eth
 load_dotenv()
 
 class Bot:
-    def __init__(self, public_key, private_key, contract_db='contracts.json'):
+    def __init__(self, public_key, private_key, contract_db='../artifacts/contracts.json'):
         """
         Initializes the 'Bot' class.
 
@@ -266,12 +266,13 @@ class Bot:
 
 
 logging.basicConfig(
-    filename='bot.log', 
+    filename='../log/bot.log', 
     filemode='w', 
     format='%(asctime)s - %(message)s',
     datefmt='%d-%b-%y %H:%M:%S',
     level = logging.INFO
 )
-    
+
 bot = Bot(os.getenv('ADDRESS'), os.getenv('PRIVATE_KEY'))
 bot.run()
+B
