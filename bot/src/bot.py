@@ -100,12 +100,38 @@ class Bot:
         return _graph
 
 
-    def _get_exchange_rate(self, exchange, i, j):
+    def _get_exchange_rate(self, contract, i, j):
         """
         Gets the current exchange rate at some exchange.
         """
 
-        pass
+        if contract['exchange'] == 'curve':
+            _a = 0
+            _b = 0
+
+            for _coin in contract['coins']:
+                if _coin['name'] == i:
+                    _a = _coin['number']
+
+                if _coin['name'] == j:
+                    _b = _coin['number']
+
+            _i_decimals = 0
+            _j_decimals = 0
+
+            if i == 'dai': _i_decimals = 10 ** 18
+            if j == 'dai': _j_decimals = 10 ** 18
+            if i == 'usdc': _i_decimals = 10 ** 6
+            if j == 'usdc': _j_decimals = 10 ** 6
+            if i == 'usdt': _i_decimals = 10 ** 6
+            if j == 'usdt': _j_decimals = 10 ** 6
+
+            _raw_price = contract['contract_impl'].get_function_by_signature(
+                'get_dy_underlying(int128,int128,uint256)'
+            )(a, b, _i_decimals).call()
+
+            return _raw_price / _j_decimals
+            
     
 
     def _update_graph(self):
