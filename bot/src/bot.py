@@ -58,8 +58,35 @@ class Bot:
         information at that moment.
         """
 
-        pass
+        _data = []
+        
+        for _contract in self.contracts:
+            _exchange_data
+            _exchange = _contract['exchange']
+            _currencies = _contract['currencies']
 
+            # get exchange rate between all pairs
+            _pairs = []
+
+            for _currency_a in _currencies:
+                for _currency_b in currencies:
+                    if _currency_a != _currency_b:
+                        _pair_data = {}
+
+                        _rate = 1 #self.getExchangeRate
+
+                        _pair_data['a'] = _currency_a
+                        _pair_data['b'] = _currency_b
+                        _pair_date['rate'] = _rate
+
+                        _pairs.append(_pair_data)
+
+            _exchange_data['exchange'] = _exchange
+            _exchange_data['currencies'] = _currencies
+            _exchange_data['pairs'] = _pairs
+
+            _data.append(_exchange_data)
+        
 
     def _init_graph(self):
         """
@@ -95,7 +122,7 @@ class Bot:
         otherwise returns None.
         """
 
-        pass
+        return self.graph.find_arbitrage()
 
 
     def _execute_swap(self, path):
