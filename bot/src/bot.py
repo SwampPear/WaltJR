@@ -1,7 +1,7 @@
 import json
 import logging
 import web3
-from dotenv import load_dotenv()
+from dotenv import load_dotenv
 from eth import Eth
 from algorithm import Graph
 
@@ -62,7 +62,8 @@ class Bot:
         _data = []
         
         for _contract in self.contracts:
-            _exchange_data
+            _exchange_data = []
+            
             _exchange = _contract['exchange']
             _currencies = _contract['currencies']
 
@@ -100,6 +101,38 @@ class Bot:
         return _graph
 
 
+    def _get_exchange_rate_curve(self, exchange, i, j):
+        """
+        Gets the exchange rate for some pair on the Curve exchange.
+        """
+
+        _a = 0
+        _b = 0
+
+        for _coin in _contract['coins']:
+            if _coin['name'] == i:
+                _a = _coin['number']
+
+            if _coin['name'] == j:
+                _b = _coin['number']
+
+        _i_decimals = 0
+        _j_decimals = 0
+
+        if i == 'dai': _i_decimals = 10 ** 18
+        if j == 'dai': _j_decimals = 10 ** 18
+        if i == 'usdc': _i_decimals = 10 ** 6
+        if j == 'usdc': _j_decimals = 10 ** 6
+        if i == 'usdt': _i_decimals = 10 ** 6
+        if j == 'usdt': _j_decimals = 10 ** 6
+
+        _raw_price = _contract['contract_impl'].get_function_by_signature(
+            'get_dy_underlying(int128,int128,uint256)'
+        )(a, b, _i_decimals).call()
+
+        return _raw_price / _j_decimals
+
+
     def _get_exchange_rate(self, exchange, i, j):
         """
         Gets the current exchange rate at some exchange.
@@ -113,32 +146,7 @@ class Bot:
             
 
         if exchange == 'curve':
-            _a = 0
-            _b = 0
-
-            for _coin in _contract['coins']:
-                if _coin['name'] == i:
-                    _a = _coin['number']
-
-                if _coin['name'] == j:
-                    _b = _coin['number']
-
-            _i_decimals = 0
-            _j_decimals = 0
-
-            if i == 'dai': _i_decimals = 10 ** 18
-            if j == 'dai': _j_decimals = 10 ** 18
-            if i == 'usdc': _i_decimals = 10 ** 6
-            if j == 'usdc': _j_decimals = 10 ** 6
-            if i == 'usdt': _i_decimals = 10 ** 6
-            if j == 'usdt': _j_decimals = 10 ** 6
-
-            _raw_price = _contract['contract_impl'].get_function_by_signature(
-                'get_dy_underlying(int128,int128,uint256)'
-            )(a, b, _i_decimals).call()
-
-            return _raw_price / _j_decimals
-            
+            return _get_exchange_rate_curve(exchange, i, j)
     
 
     def _update_graph(self):
