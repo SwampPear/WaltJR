@@ -1,4 +1,4 @@
-import json
+import jsonAAAAAOA
 import logging
 import web3
 from dotenv import load_dotenv()
@@ -150,3 +150,5 @@ class Bot:
             # execute arbitrage on optimal path
             if _optimal_path != None:
                 self._execute_swap(_optimal_path)
+
+        logging.info('WaltJR terminated')
