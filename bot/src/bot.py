@@ -138,4 +138,15 @@ class Bot:
         Main program loop for the Bot class.
         """
 
-        pass
+        _should_terminate = False
+        
+        while not _should_terminate:
+            # update graph
+            self._update_graph()
+
+            # find optimal path
+            _optimal_path = self._compute_optimal_path()
+
+            # execute arbitrage on optimal path
+            if _optimal_path != None:
+                self._execute_swap(_optimal_path)
