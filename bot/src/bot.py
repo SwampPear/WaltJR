@@ -146,7 +146,7 @@ class Bot:
             
 
         if exchange == 'curve':
-            return _get_exchange_rate_curve(exchange, i, j)
+            return self._get_exchange_rate_curve(exchange, i, j)
     
 
     def _update_graph(self):
