@@ -1,4 +1,4 @@
-import jsonAAAAAOA
+import json
 import logging
 import web3
 from dotenv import load_dotenv()
@@ -25,11 +25,12 @@ class Bot:
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
-        logging.info('Contracts initialized')
         self.contracts = self._init_contracts(contracts_file)
+        logging.info('Contracts initialized')
 
-        logging.info('Graph initialized')
+        
         self.graph = self._init_graph()
+        logging.info('Graph initialized')
 
 
     def _init_contracts(self, contracts_file):

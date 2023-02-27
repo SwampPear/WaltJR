@@ -1,11 +1,16 @@
 import os
 import logging
+from datetime import datetime
 from bot import Bot
 
 
 if __name__ == '__main__':
+    _now = datetime.now()
+    _log_name = _now.strftime('%m-%d-%Y-%H-%M-%S')
+    _log_file = f'../log/{_log_name}.log'
+    
     logging.basicConfig(
-        filename='../log/bot.log',
+        filename=_log_file,
         filemode='w',
         format='%(asctime)s - %(message)s',
         datefmt='%d-%b-%y %H:%M:%S',
