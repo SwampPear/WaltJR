@@ -5,7 +5,7 @@ import web3
 from dotenv import load_dotenv
 from eth import Eth
 from algorithm import Graph
-from utils import decimals
+from utils import decimals, address
 
 
 load_dotenv()
@@ -139,7 +139,7 @@ class Bot:
 
     def _get_exchange_rate_curve_3pool(self, exchange, i, j):
         """
-        Gets the exchange rate for some pair on the Curve exchange.
+        Gets the exchange rate for some pair on the Curve 3pool exchange.
         """
 
         _contract = []
@@ -164,6 +164,30 @@ class Bot:
         _raw_price = _contract['contract_impl'].get_function_by_signature(
             'get_dy_underlying(int128,int128,uint256)'
         )(_a, _b, _i_decimals).call()
+
+        return _raw_price / _j_decimals
+    
+
+    def _get_exchange_rate_pancake_swap(self, exchange, i, j):
+        """
+        Gets the exchange rate for some pair on the pancakeswap exchange.
+        """
+
+        _contract = []
+
+        for _temp_contract in self.contracts:
+            if exchange == _temp_contract['exchange']:
+                _contract = _temp_contract
+
+        _a = address(i)
+        _b = address(j)
+
+        _i_decimals = decimals(i)
+        _j_decimals = decimals(j)
+
+        _raw_price = _contract['contract_impl'].get_function_by_signature(
+            'getAmountsOut(uint amountIn, address[] memory path)'
+        )(_i_decimals, [_a, _b]).call()
 
         return _raw_price / _j_decimals
 
