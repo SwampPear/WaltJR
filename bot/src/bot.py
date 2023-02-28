@@ -164,12 +164,14 @@ class Bot:
                 _weight = _edge[0]
                 
                 _next_vertex = _edge[1]
-                _b = _next_vertex.data_class
 
-                _rate = self._get_exchange_rate(_exchange, _a, _b)
+                if _vertex.data_class != _next_vertex.data_class:
+                    _b = _next_vertex.data_class
 
-                # update edge weight
-                _edge[0] = _rate
+                    _rate = self._get_exchange_rate(_exchange, _a, _b)
+
+                    # update edge weight
+                    _edge[0] = _rate
 
 
     def _compute_optimal_path(self):
