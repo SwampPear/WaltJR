@@ -153,10 +153,10 @@ class Bot:
 
         for _currency in _contract['currencies']:
             if _currency['name'] == i:
-                _a = _currency['number']
+                _a = _currency['id']
 
             if _currency['name'] == j:
-                _b = _currency['number']
+                _b = _currency['id']
 
         _i_decimals = decimals(i)
         _j_decimals = decimals(j)
