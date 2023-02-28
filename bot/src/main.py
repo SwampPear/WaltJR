@@ -7,7 +7,7 @@ from bot import Bot
 if __name__ == '__main__':
     _now = datetime.now()
     _log_name = _now.strftime('%m-%d-%Y-%H-%M-%S')
-    _log_file = f'../log/{_log_name}.log'
+    _log_file = f'bot/log/{_log_name}.log'
     
     logging.basicConfig(
         filename=_log_file,

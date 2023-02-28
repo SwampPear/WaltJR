@@ -22,7 +22,15 @@ class Vertex:
         self.data_class = data_class
         self.data_enum = data_enum
 
-        
+    
+    def __str__(self):
+        """
+        String representation of this Vertex.
+        """
+
+        return f'{self.data_class} ({self.data_enum})'
+
+      
     def __eq__(self, other):
         """
         Equality operator.
@@ -98,8 +106,8 @@ class Graph:
         for _vertex in self.vertices:
             _output += f'{_vertex.data_class} ({_vertex.data_enum})\n'
 
-            for _weight in _vertex.weights:
-                _output += f'-> {_weight[0]} -> {_weight[1].data_class} ({_weight[1].data_enum})\n'
+            for _edge in _vertex.edges:
+                _output += f'-> {_edge[0]} -> {_edge[1].data_class} ({_edge[1].data_enum})\n'
     
         return _output
     
@@ -308,7 +316,7 @@ class Graph:
                 _max_weight = _weight
                 _optimal_path = _path
 
-        if _max_weight < 1.0015:
+        if _max_weight < .5:
             return None
             
         return _optimal_path
@@ -365,10 +373,3 @@ data = [
         ]
     }
 ]
-
-g = Graph(data)
-optimal_path = g.find_arbitrage()
-print(optimal_path)
-        
-
-

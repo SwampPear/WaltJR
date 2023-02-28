@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import web3
 from dotenv import load_dotenv
 from eth import Eth
@@ -15,7 +16,7 @@ class Bot:
     The automated engine combining each different component of this bot.
     """
 
-    def __init__(self, public_key, private_key, contracts_file='../artifacts/contracts.json'):
+    def __init__(self, public_key, private_key, contracts_file='bot/artifacts/contracts.json'):
         """
         Initializes this Bot object.
         """
@@ -55,13 +56,59 @@ class Bot:
         Initializes the primary Graph object to be used by this Bot.
         """
 
+        data = [
+            {
+                'exchange': 'curve_3pool',
+                'currencies': [
+                    'dai',
+                    'usdc',
+                    'usdt'
+                ],
+                'pairs': [
+                    {
+                        'a': 'dai',
+                        'b': 'usdc',
+                        'rate': 1.5
+                    },
+                    {
+                        'a': 'dai',
+                        'b': 'usdt',
+                        'rate': 2.5
+                    },
+                    {
+                        'a': 'usdc',
+                        'b': 'dai',
+                        'rate': 3.5
+                    },
+                    {
+                        'a': 'usdc',
+                        'b': 'usdt',
+                        'rate': 4.5
+                    },
+                    {
+                        'a': 'usdt',
+                        'b': 'dai',
+                        'rate': 5.5
+                    },
+                    {
+                        'a': 'usdt',
+                        'b': 'usdc',
+                        'rate': 6.5
+                    }
+                ]
+            }
+        ]
+
         _data = []
 
         for _contract in self.contracts:
-            _exchange_data = []
+            _exchange_data = {}
 
             _exchange = _contract['exchange']
-            _currencies = _contract['currencies']
+            _currencies = []
+
+            for _currency in _contract['currencies']:
+                _currencies.append(_currency['name'])
 
             # get exchange rate between all pairs
             _pairs = []
@@ -85,7 +132,7 @@ class Bot:
 
             _data.append(_exchange_data)
 
-        _graph = Graph(_data)
+        _graph = Graph(data)
 
         return _graph
 
@@ -137,20 +184,19 @@ class Bot:
         edges according to exchange rate.
         """
 
-        for _vertex in self.graph.vertices:
+        for i in range(0, len(self.graph.vertices)):
+            _vertex = self.graph.vertices[i]
             _exchange = _vertex.data_enum
-            _a = _vertex
+            _a = _vertex.data_class
 
-            for _edge in _vertex.edges:
-                _next_vertex = _edge[1]
+            for j in range(0, len(self.graph.vertices[i].edges)):
+                _next_vertex = _vertex.edges[j][1]
 
                 if _vertex.data_class != _next_vertex.data_class:
                     _b = _next_vertex.data_class
-
                     _rate = self._get_exchange_rate(_exchange, _a, _b)
 
-                    # update edge weight
-                    _edge[0] = _rate
+                    self.graph.vertices[i].edges[j][0] = _rate
 
 
     def _execute_swap(self, path):
@@ -172,8 +218,11 @@ class Bot:
             self._update_graph()
 
             _optimal_path = self.graph.compute_optimal_path()
+            print(_optimal_path)
 
             if _optimal_path != None:
                 self._execute_swap(_optimal_path)
+
+            time.sleep(10)
 
         logging.info('WaltJR terminated')
