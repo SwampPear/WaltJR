@@ -4,6 +4,7 @@ import web3
 from dotenv import load_dotenv
 from eth import Eth
 from algorithm import Graph
+from utils import decimals
 
 
 load_dotenv()
@@ -19,18 +20,14 @@ class Bot:
         Initializes this Bot object.
         """
 
-        logging.info('WaltJR initialized')
-        
-
         self.eth = Eth(public_key, private_key)
         self.w3 = self.eth.w3
 
         self.contracts = self._init_contracts(contracts_file)
-        logging.info('Contracts initialized')
 
-        
         self.graph = self._init_graph()
-        logging.info('Graph initialized')
+        
+        logging.info('WaltJR initialized')
 
 
     def _init_contracts(self, contracts_file):
@@ -53,17 +50,16 @@ class Bot:
         return _data
 
 
-    def _format_init_graph_data(self):
+    def _init_graph(self):
         """
-        Formats the initial data for the Graph based on exchange rates and exchange
-        information at that moment.
+        Initializes the primary Graph object to be used by this Bot.
         """
 
         _data = []
-        
+
         for _contract in self.contracts:
             _exchange_data = []
-            
+
             _exchange = _contract['exchange']
             _currencies = _contract['currencies']
 
@@ -71,7 +67,7 @@ class Bot:
             _pairs = []
 
             for _currency_a in _currencies:
-                for _currency_b in currencies:
+                for _currency_b in _currencies:
                     if _currency_a != _currency_b:
                         _pair_data = {}
 
@@ -79,7 +75,7 @@ class Bot:
 
                         _pair_data['a'] = _currency_a
                         _pair_data['b'] = _currency_b
-                        _pair_date['rate'] = _rate
+                        _pair_data['rate'] = _rate
 
                         _pairs.append(_pair_data)
 
@@ -88,47 +84,39 @@ class Bot:
             _exchange_data['pairs'] = _pairs
 
             _data.append(_exchange_data)
-        
 
-    def _init_graph(self):
-        """
-        Initializes the primary Graph object to be used by this Bot.
-        """
-        
-        _data = self._format_init_graph_data()
         _graph = Graph(_data)
 
         return _graph
 
 
-    def _get_exchange_rate_curve(self, exchange, i, j):
+    def _get_exchange_rate_curve_3pool(self, exchange, i, j):
         """
         Gets the exchange rate for some pair on the Curve exchange.
         """
 
+        _contract = []
+
+        for _temp_contract in self.contracts:
+            if exchange == _temp_contract['exchange']:
+                _contract = _temp_contract
+
         _a = 0
         _b = 0
 
-        for _coin in _contract['coins']:
-            if _coin['name'] == i:
-                _a = _coin['number']
+        for _currency in _contract['currencies']:
+            if _currency['name'] == i:
+                _a = _currency['number']
 
-            if _coin['name'] == j:
-                _b = _coin['number']
+            if _currency['name'] == j:
+                _b = _currency['number']
 
-        _i_decimals = 0
-        _j_decimals = 0
-
-        if i == 'dai': _i_decimals = 10 ** 18
-        if j == 'dai': _j_decimals = 10 ** 18
-        if i == 'usdc': _i_decimals = 10 ** 6
-        if j == 'usdc': _j_decimals = 10 ** 6
-        if i == 'usdt': _i_decimals = 10 ** 6
-        if j == 'usdt': _j_decimals = 10 ** 6
+        _i_decimals = decimals(i)
+        _j_decimals = decimals(j)
 
         _raw_price = _contract['contract_impl'].get_function_by_signature(
             'get_dy_underlying(int128,int128,uint256)'
-        )(a, b, _i_decimals).call()
+        )(_a, _b, _i_decimals).call()
 
         return _raw_price / _j_decimals
 
@@ -138,16 +126,9 @@ class Bot:
         Gets the current exchange rate at some exchange.
         """
 
-        _contract = []
-        
-        for _temp_contract in self.contracts:
-            if exchange == _temp_contract['exchange']:
-                _contract = _temp_contract
-            
+        if exchange == 'curve_3pool':
+            return self._get_exchange_rate_curve_3pool(exchange, i, j)
 
-        if exchange == 'curve':
-            return self._get_exchange_rate_curve(exchange, i, j)
-    
 
     def _update_graph(self):
         """
@@ -159,10 +140,8 @@ class Bot:
         for _vertex in self.graph.vertices:
             _exchange = _vertex.data_enum
             _a = _vertex
-            
+
             for _edge in _vertex.edges:
-                _weight = _edge[0]
-                
                 _next_vertex = _edge[1]
 
                 if _vertex.data_class != _next_vertex.data_class:
@@ -172,15 +151,6 @@ class Bot:
 
                     # update edge weight
                     _edge[0] = _rate
-
-
-    def _compute_optimal_path(self):
-        """
-        Computes the optimal path of a swap to take place and returns it,
-        otherwise returns None.
-        """
-
-        return self.graph.find_arbitrage()
 
 
     def _execute_swap(self, path):
@@ -197,15 +167,12 @@ class Bot:
         """
 
         _should_terminate = False
-        
+
         while not _should_terminate:
-            # update graph
             self._update_graph()
 
-            # find optimal path
-            _optimal_path = self._compute_optimal_path()
+            _optimal_path = self.graph.compute_optimal_path()
 
-            # execute arbitrage on optimal path
             if _optimal_path != None:
                 self._execute_swap(_optimal_path)
 

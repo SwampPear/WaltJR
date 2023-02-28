@@ -290,7 +290,7 @@ class Graph:
         return _data
 
 
-    def _compute_optimal_path(self):
+    def compute_optimal_path(self):
         """
         Computes the maximum weight path cycle for each optimized
         circuit.
@@ -308,6 +308,9 @@ class Graph:
                 _max_weight = _weight
                 _optimal_path = _path
 
+        if _max_weight < 1.0015:
+            return None
+            
         return _optimal_path
 
 
