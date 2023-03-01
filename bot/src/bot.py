@@ -56,49 +56,6 @@ class Bot:
         Initializes the primary Graph object to be used by this Bot.
         """
 
-        data = [
-            {
-                'exchange': 'curve_3pool',
-                'currencies': [
-                    'dai',
-                    'usdc',
-                    'usdt'
-                ],
-                'pairs': [
-                    {
-                        'a': 'dai',
-                        'b': 'usdc',
-                        'rate': 1.5
-                    },
-                    {
-                        'a': 'dai',
-                        'b': 'usdt',
-                        'rate': 2.5
-                    },
-                    {
-                        'a': 'usdc',
-                        'b': 'dai',
-                        'rate': 3.5
-                    },
-                    {
-                        'a': 'usdc',
-                        'b': 'usdt',
-                        'rate': 4.5
-                    },
-                    {
-                        'a': 'usdt',
-                        'b': 'dai',
-                        'rate': 5.5
-                    },
-                    {
-                        'a': 'usdt',
-                        'b': 'usdc',
-                        'rate': 6.5
-                    }
-                ]
-            }
-        ]
-
         _data = []
 
         for _contract in self.contracts:
@@ -118,7 +75,7 @@ class Bot:
                     if _currency_a != _currency_b:
                         _pair_data = {}
 
-                        _rate = 1 #self.getExchangeRate
+                        _rate = 1
 
                         _pair_data['a'] = _currency_a
                         _pair_data['b'] = _currency_b
@@ -132,7 +89,7 @@ class Bot:
 
             _data.append(_exchange_data)
 
-        _graph = Graph(data)
+        _graph = Graph(_data)
 
         return _graph
 
@@ -168,7 +125,7 @@ class Bot:
         return _raw_price / _j_decimals
     
 
-    def _get_exchange_rate_pancake_swap(self, exchange, i, j):
+    def _get_exchange_rate_pancakeswap(self, exchange, i, j):
         """
         Gets the exchange rate for some pair on the pancakeswap exchange.
         """
@@ -181,14 +138,16 @@ class Bot:
 
         _a = address(i)
         _b = address(j)
+        print(_a)
+        print(_b)
 
         _i_decimals = decimals(i)
         _j_decimals = decimals(j)
-
+        
         _raw_price = _contract['contract_impl'].get_function_by_signature(
-            'getAmountsOut(uint amountIn, address[] memory path)'
-        )(_i_decimals, [_a, _b]).call()
-
+            'getAmountsOut(uint256,address[])'
+        )(_i_decimals, [_a, _b]).call()[1]
+        
         return _raw_price / _j_decimals
 
 
@@ -199,6 +158,8 @@ class Bot:
 
         if exchange == 'curve_3pool':
             return self._get_exchange_rate_curve_3pool(exchange, i, j)
+        elif exchange == 'pancakeswap':
+            return self._get_exchange_rate_pancakeswap(exchange, i, j)
 
 
     def _update_graph(self):
